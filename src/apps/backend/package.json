@@ -23,7 +23,7 @@
 	"packageManager": "pnpm@7.15.0",
   "scripts": {
     "build": "tsc && node ./server.ts",
-    "lint": "tsc",
+    "lint": "tsc ./server.ts",
     "dev": "nodemon ./server.ts"
   }
 }
