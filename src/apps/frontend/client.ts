@@ -1,6 +1,6 @@
 // @filename: client.ts
 import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
-import type { AppRouter } from '../backend/server';
+import type { AppRouter } from 'backend';
  
 // Notice the <AppRouter> generic here.
 const trpc = createTRPCProxyClient<AppRouter>({
