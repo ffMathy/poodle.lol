@@ -1,0 +1,16 @@
+name: CI/CD
+on:
+  push:
+    branches: main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2.2.4
+        
+      - name: Install Turborepo
+        run: pnpm add turbo --global
+        
+      - name: Build
+        run: turbo build
