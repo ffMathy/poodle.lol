@@ -351,3 +351,6 @@ MigrationBackup/
 
 # PNPM
 .pnpm-store/
+
+# Turbo
+.turbo/

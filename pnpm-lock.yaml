@@ -1,93 +1,70 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@tanstack/react-query': ^4.26.1
-  '@trpc/client': ^10.15.0
-  '@trpc/next': ^10.15.0
-  '@trpc/react-query': ^10.15.0
-  '@trpc/server': ^10.15.0
+  turbo: ^1.8.3
 
-dependencies:
-  '@tanstack/react-query': 4.26.1
-  '@trpc/client': 10.15.0_@trpc+server@10.15.0
-  '@trpc/next': 10.15.0_h2xmnow6t3uthnshdossz2ehfe
-  '@trpc/react-query': 10.15.0_h3ewfraqo5s52ggq4zjgcnjcye
-  '@trpc/server': 10.15.0
+devDependencies:
+  turbo: 1.8.3
 
 packages:
 
-  /@tanstack/query-core/4.26.1:
-    resolution: {integrity: sha512-Zrx2pVQUP4ndnsu6+K/m8zerXSVY8QM+YSbxA1/jbBY21GeCd5oKfYl92oXPK0hPEUtoNuunIdiq0ZMqLos+Zg==}
-    dev: false
+  /turbo-darwin-64/1.8.3:
+    resolution: {integrity: sha512-bLM084Wr17VAAY/EvCWj7+OwYHvI9s/NdsvlqGp8iT5HEYVimcornCHespgJS/yvZDfC+mX9EQkn3V2JmYgGGw==}
+    cpu: [x64]
+    os: [darwin]
+    requiresBuild: true
+    dev: true
+    optional: true
 
-  /@tanstack/react-query/4.26.1:
-    resolution: {integrity: sha512-i3dnz4TOARGIXrXQ5P7S25Zfi4noii/bxhcwPurh2nrf5EUCcAt/95TB2HSmMweUBx206yIMWUMEQ7ptd6zwDg==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      react-native: '*'
-    peerDependenciesMeta:
-      react-dom:
-        optional: true
-      react-native:
-        optional: true
-    dependencies:
-      '@tanstack/query-core': 4.26.1
-      use-sync-external-store: 1.2.0
-    dev: false
+  /turbo-darwin-arm64/1.8.3:
+    resolution: {integrity: sha512-4oZjXtzakopMK110kue3z/hqu3WLv+eDLZOX1NGdo49gqca9BeD8GbH+sXpAp6tqyeuzpss+PIliVYuyt7LgbA==}
+    cpu: [arm64]
+    os: [darwin]
+    requiresBuild: true
+    dev: true
+    optional: true
 
-  /@trpc/client/10.15.0_@trpc+server@10.15.0:
-    resolution: {integrity: sha512-Tmm3N7jibEOZTsvHRU+tWCVvUf8F9/UcKOVTGAWuyasBpnjOZ7ClZ81F9wo4cg9+9tUxUhuJns+E96/HtATpyQ==}
-    peerDependencies:
-      '@trpc/server': 10.15.0
-    dependencies:
-      '@trpc/server': 10.15.0
-    dev: false
+  /turbo-linux-64/1.8.3:
+    resolution: {integrity: sha512-uvX2VKotf5PU14FCxJA5iHItPQno2JWzerMd+g3/h/Asay6dvxvtVjc39MQeGT0H5njSvzVKFkT+3/5q8lgOEg==}
+    cpu: [x64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
 
-  /@trpc/next/10.15.0_h2xmnow6t3uthnshdossz2ehfe:
-    resolution: {integrity: sha512-jekFhfvqvw5+KP+ya3zK0nXlNtOTBjlhAynlIJqTOoTM08rx1s24x3S35seaxKmxVSdREClmpNgoZmaHWH6rlw==}
-    peerDependencies:
-      '@tanstack/react-query': ^4.3.8
-      '@trpc/client': 10.15.0
-      '@trpc/react-query': 10.15.0
-      '@trpc/server': 10.15.0
-      next: '*'
-      react: '>=16.8.0'
-      react-dom: '>=16.8.0'
-    dependencies:
-      '@tanstack/react-query': 4.26.1
-      '@trpc/client': 10.15.0_@trpc+server@10.15.0
-      '@trpc/react-query': 10.15.0_h3ewfraqo5s52ggq4zjgcnjcye
-      '@trpc/server': 10.15.0
-      react-ssr-prepass: 1.5.0
-    dev: false
+  /turbo-linux-arm64/1.8.3:
+    resolution: {integrity: sha512-E1p+oH3XKMaPS4rqWhYsL4j2Pzc0d/9P5KU7Kn1kqVLo2T3iRA7n2KVULEieUNE0nTH+aIJPXYXOpqCI5wFJaA==}
+    cpu: [arm64]
+    os: [linux]
+    requiresBuild: true
+    dev: true
+    optional: true
 
-  /@trpc/react-query/10.15.0_h3ewfraqo5s52ggq4zjgcnjcye:
-    resolution: {integrity: sha512-MD8JBoviAioI3ssOzN+Uxd8uGvhgfqvtbmkdhYQkQJOBlQw+4A55BfeXykeRmIHOs6X83iiqZVVerximEzTADQ==}
-    peerDependencies:
-      '@tanstack/react-query': ^4.3.8
-      '@trpc/client': 10.15.0
-      '@trpc/server': 10.15.0
-      react: '>=16.8.0'
-      react-dom: '>=16.8.0'
-    dependencies:
-      '@tanstack/react-query': 4.26.1
-      '@trpc/client': 10.15.0_@trpc+server@10.15.0
-      '@trpc/server': 10.15.0
-    dev: false
+  /turbo-windows-64/1.8.3:
+    resolution: {integrity: sha512-cnzAytHtoLXd0J7aNzRpZFpL/GTjcBmkvAPlbOdf/Pl1iwS4qzGrudZQ+OM1lmLgLIfBPIavsGHBknTwTNib4A==}
+    cpu: [x64]
+    os: [win32]
+    requiresBuild: true
+    dev: true
+    optional: true
 
-  /@trpc/server/10.15.0:
-    resolution: {integrity: sha512-Kf+wTU5iZjjjEzqZDy+o5wc4nEZKvE0yWdF9qZa72xLu6eTJ0BS2hnwQZeCZ2pIbmQb8/6lFr5igHiY4/dy0mA==}
-    dev: false
+  /turbo-windows-arm64/1.8.3:
+    resolution: {integrity: sha512-ulIiItNm2w/zYJdD5/oAzjzNns1IjbpweRzpsE8tLXaWwo6+fnXXkyloUug0IUhcd2k6fJXfoiDZfygqpOVuXg==}
+    cpu: [arm64]
+    os: [win32]
+    requiresBuild: true
+    dev: true
+    optional: true
 
-  /react-ssr-prepass/1.5.0:
-    resolution: {integrity: sha512-yFNHrlVEReVYKsLI5lF05tZoHveA5pGzjFbFJY/3pOqqjGOmMmqx83N4hIjN2n6E1AOa+eQEUxs3CgRnPmT0RQ==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    dev: false
-
-  /use-sync-external-store/1.2.0:
-    resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-    dev: false
+  /turbo/1.8.3:
+    resolution: {integrity: sha512-zGrkU1EuNFmkq6iky6LcMqD4h0OLE8XysVFxQWRIZbcTNnf0XAycbsbeEyiJpiWeqb7qtg2bVuY9EYcNoNhVuQ==}
+    hasBin: true
+    requiresBuild: true
+    optionalDependencies:
+      turbo-darwin-64: 1.8.3
+      turbo-darwin-arm64: 1.8.3
+      turbo-linux-64: 1.8.3
+      turbo-linux-arm64: 1.8.3
+      turbo-windows-64: 1.8.3
+      turbo-windows-arm64: 1.8.3
+    dev: true
