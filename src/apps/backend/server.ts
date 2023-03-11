@@ -1,4 +1,6 @@
-import { initTRPC } from '@trpc/server';
+import { inferAsyncReturnType, initTRPC } from '@trpc/server';
+import configureAws from './server.aws-lambda';
+import configureExpress from './server.express';
  
 const t = initTRPC.create();
  
@@ -13,7 +15,7 @@ const userList: User[] = [
     name: 'KATT',
   },
 ];
- 
+
 const appRouter = t.router({
   userById: t.procedure
     // The input is unknown at this time.
@@ -37,3 +39,6 @@ const appRouter = t.router({
 });
  
 export type AppRouter = typeof appRouter;
+
+configureAws(appRouter);
+configureExpress(appRouter);
