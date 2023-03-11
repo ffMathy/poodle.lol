@@ -11,8 +11,9 @@ export default function configureAws(appRouter: AppRouter) {
     }: CreateAWSLambdaContextOptions<APIGatewayProxyEventV2>) => ({})
 
     type Context = inferAsyncReturnType<typeof createContext>;
-    return awsLambdaRequestHandler({
+    const handler = awsLambdaRequestHandler({
         router: appRouter,
         createContext,
-    })
+    });
+    return handler;
 }

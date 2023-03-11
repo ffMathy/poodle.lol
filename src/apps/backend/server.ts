@@ -40,5 +40,9 @@ const appRouter = t.router({
  
 export type AppRouter = typeof appRouter;
 
-configureAws(appRouter);
-configureExpress(appRouter);
+export const handler = configureAws(appRouter);
+
+const isRunningFromAws = "AWS_LAMBDA_FUNCTION_NAME" in process.env;
+if(!isRunningFromAws) {
+  configureExpress(appRouter);
+}
