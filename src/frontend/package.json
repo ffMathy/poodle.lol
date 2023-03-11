@@ -1,0 +1,17 @@
+{
+  "dependencies": {
+		"@trpc/client": "^10.15.0"
+  },
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+	"packageManager": "pnpm@7.15.0",
+  "scripts": {
+    "build": "vite build",
+    "lint": "tsc"
+  }
+}
