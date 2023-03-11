@@ -1,6 +1,4 @@
-import { inferAsyncReturnType, initTRPC } from '@trpc/server';
-import configureAws from './server.aws-lambda';
-import configureExpress from './server.express';
+import { initTRPC } from '@trpc/server';
  
 const t = initTRPC.create();
  
@@ -16,7 +14,7 @@ const userList: User[] = [
   },
 ];
 
-const appRouter = t.router({
+export const appRouter = t.router({
   userById: t.procedure
     // The input is unknown at this time.
     // A client could have sent us anything
@@ -39,10 +37,3 @@ const appRouter = t.router({
 });
  
 export type AppRouter = typeof appRouter;
-
-export const handler = configureAws(appRouter);
-
-const isRunningFromAws = "AWS_LAMBDA_FUNCTION_NAME" in process.env;
-if(!isRunningFromAws) {
-  configureExpress(appRouter);
-}

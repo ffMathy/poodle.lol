@@ -1,6 +1,6 @@
 import { inferAsyncReturnType, initTRPC } from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';
-import type { AppRouter } from './server';
+import type { AppRouter } from './app-router';
 import express from "express";
 
 /**

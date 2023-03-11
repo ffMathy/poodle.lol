@@ -1,8 +1,7 @@
 import { inferAsyncReturnType } from '@trpc/server';
 import { CreateAWSLambdaContextOptions, awsLambdaRequestHandler } from '@trpc/server/adapters/aws-lambda';
 import type { APIGatewayProxyEventV2 } from 'aws-lambda';
-
-import type { AppRouter } from './server';
+import type { AppRouter } from './app-router';
 
 export default function configureAws(appRouter: AppRouter) {
     const createContext = ({
