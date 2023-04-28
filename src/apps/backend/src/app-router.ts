@@ -62,6 +62,11 @@ export const appRouter = t.router({
         },
         {
           id: nanoid(),
+          startTime: addHours(addDays(new Date(), 2), 2),
+          endTime: addHours(addDays(new Date(), 2), 4)
+        },
+        {
+          id: nanoid(),
           startTime: addDays(new Date(), 4),
           endTime: addHours(addDays(new Date(), 4), 2)
         }
@@ -79,7 +84,7 @@ export const appRouter = t.router({
           },
           {
             userName: "Robert",
-            subscribedTimeslotIds: [availableTimes[1].id]
+            subscribedTimeslotIds: [availableTimes[2].id]
           },
           {
             userName: "Marc",

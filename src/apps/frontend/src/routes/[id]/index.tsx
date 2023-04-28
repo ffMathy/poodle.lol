@@ -2,7 +2,7 @@ import { Resource, component$, useResource$, useTask$ } from '@builder.io/qwik';
 import { useLocation } from '@builder.io/qwik-city';
 import { trpc } from '../../api/client';
 import { groupBy, keys } from "lodash";
-import { getDate, getDay } from 'date-fns';
+import { format, getDate, getDay, getTime } from 'date-fns';
 
 type Appointment = Awaited<ReturnType<typeof trpc.getAppointmentById.query>>;
 
@@ -52,30 +52,54 @@ const AvailableTimesTable = component$((props: {
     availableTimes: TimeSlot[],
     attendees: Attendee[]
 }) => {
-    const times = props.availableTimes;
+    const allAvailableTimes = props.availableTimes;
     const availableTimesByDay = groupBy(
-        times,
+        allAvailableTimes,
         x => x.startTime.toDateString());
 
-    const AvailableTimeHeader = (props: {
+    const AvailableDateHeader = (props: {
         date: Date
     }) => {
-        const startTime = times[0].startTime;
-        return <th>
-            {startTime.getDate()}
+        const times = availableTimesByDay[props.date.toDateString()];
+        const firstStartTime = times[0].startTime;
+        const colspan = times.length;
+
+        return <th class="text-center" colSpan={colspan}>
+            <div class="uppercase text-2xl font-thin">
+                {format(firstStartTime, "LLL")}
+            </div>
+            <div class="text-4xl px-5 pb-5 font-light">
+                {format(firstStartTime, "do")}
+            </div>
         </th>
+    }
+
+    const AvailableTimesHeader = (props: {
+        date: Date
+    }) => {
+        const times = availableTimesByDay[props.date.toDateString()];
+
+        return <>
+            {times.map(time => 
+                <th class="text-xs text-center p-0 pt-0 font-normal">
+                    {format(time.startTime, "p")}<br/>
+                    {format(time.endTime, "p")}
+                </th>)}
+        </>
     }
 
     const AttendeeRow = (props: {
         attendee: Attendee
     }) => {
         return <tr>
-            <td>
+            <td class="text-right p-3">
                 {props.attendee.userName}
             </td>
-            {times.map(time => 
-                <td>
-                    Foo
+            {allAvailableTimes.map(time => 
+                <td class="text-center p-3">
+                    {props.attendee.subscribedTimeslotIds.indexOf(time.id) > -1 ?
+                        "X" :
+                        ""}
                 </td>)}
         </tr>
     }
@@ -83,9 +107,14 @@ const AvailableTimesTable = component$((props: {
     return <table class="table-auto">
         <thead>
             <tr>
-                <th class="font-bold">Participants</th>
+                <th></th>
                 {keys(availableTimesByDay).map(date => 
-                    <AvailableTimeHeader date={new Date(date)} />)}
+                    <AvailableDateHeader date={new Date(date)} />)}
+            </tr>
+            <tr>
+                <th class="font-bold p-3 pt-0">Participants</th>
+                {keys(availableTimesByDay).map(date => 
+                    <AvailableTimesHeader date={new Date(date)} />)}
             </tr>
         </thead>
         <tbody>
