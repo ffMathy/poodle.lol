@@ -80,9 +80,9 @@ const AvailableTimesTable = component$((props: {
         const times = availableTimesByDay[props.date.toDateString()];
 
         return <>
-            {times.map(time => 
+            {times.map(time =>
                 <th class="text-xs text-center p-0 pt-0 font-normal">
-                    {format(time.startTime, "p")}<br/>
+                    {format(time.startTime, "p")}<br />
                     {format(time.endTime, "p")}
                 </th>)}
         </>
@@ -95,12 +95,17 @@ const AvailableTimesTable = component$((props: {
             <td class="text-right p-3">
                 {props.attendee.userName}
             </td>
-            {allAvailableTimes.map(time => 
-                <td class="text-center p-3">
-                    {props.attendee.subscribedTimeslotIds.indexOf(time.id) > -1 ?
-                        "X" :
-                        ""}
-                </td>)}
+            {allAvailableTimes.map(time => {
+                const isParticipating = props.attendee.subscribedTimeslotIds.indexOf(time.id) > -1;
+                const colorClass = isParticipating ?
+                    "bg-green-100" :
+                    "bg-red-100"
+                return <td class="p-3">
+                    <div class="flex place-content-center">
+                        <div class={`${colorClass} w-12 h-12`}></div>
+                    </div>
+                </td>;
+            })}
         </tr>
     }
 
@@ -108,17 +113,17 @@ const AvailableTimesTable = component$((props: {
         <thead>
             <tr>
                 <th></th>
-                {keys(availableTimesByDay).map(date => 
+                {keys(availableTimesByDay).map(date =>
                     <AvailableDateHeader date={new Date(date)} />)}
             </tr>
             <tr>
                 <th class="font-bold p-3 pt-0">Participants</th>
-                {keys(availableTimesByDay).map(date => 
+                {keys(availableTimesByDay).map(date =>
                     <AvailableTimesHeader date={new Date(date)} />)}
             </tr>
         </thead>
         <tbody>
-            {props.attendees.map(attendee => 
+            {props.attendees.map(attendee =>
                 <AttendeeRow attendee={attendee} />)}
         </tbody>
     </table>

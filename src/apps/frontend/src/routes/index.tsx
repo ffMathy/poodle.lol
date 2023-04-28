@@ -1,11 +1,11 @@
-import { component$, useSignal, useStore, useTask$ } from '@builder.io/qwik';
+import { component$, useSignal, useStore, useTask$, useVisibleTask$ } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
 import { trpc } from '../api/client';
 
 export default component$(() => {
   const userId = useSignal<string>();
 
-  useTask$(() => {
+  useVisibleTask$(() => {
     async function task() {
       const existingUserId = localStorage.getItem("user-id");
       if(existingUserId) {
