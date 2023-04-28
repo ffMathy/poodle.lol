@@ -1,39 +1,87 @@
 import { initTRPC } from '@trpc/server';
+import { v4 as uuidv4 } from 'uuid';
+import { z } from 'zod';
+import { addDays, addHours } from 'date-fns'
  
 const t = initTRPC.create();
- 
-interface User {
-  id: string;
-  name: string;
+
+type Attendee = {
+  userName: string,
+  subscribedTimeslotIds: Timeslot["id"][]
 }
 
-const userList: User[] = [
-  {
-    id: '1',
-    name: 'KATT',
-  },
-];
+type Timeslot = {
+  id: string,
+  startTime: Date,
+  endTime: Date
+}
+
+type Appointment = {
+  creatorName: string,
+  title: string,
+  description?: string,
+  location?: string,
+  availableTimes: Timeslot[],
+  attendees: Attendee[]
+}
 
 export const appRouter = t.router({
-  userById: t.procedure
-    // The input is unknown at this time.
-    // A client could have sent us anything
-    // so we won't assume a certain data type.
-    .input((val: unknown) => {
-      // If the value is of type string, return it.
-      // TypeScript now knows that this value is a string.
-      if (typeof val === 'string') return val;
- 
-      // Uh oh, looks like that input wasn't a string.
-      // We will throw an error instead of running the procedure.
-      throw new Error(`Invalid input: ${typeof val}`);
-    })
-    .query((req) => {
-      const { input } = req;
-      const user = userList.find((u) => u.id === input);
- 
-      return user;
+  createUserId: t.procedure
+    .query(() => {
+      return uuidv4();
     }),
+  createAppointment: t.procedure
+    .input(z.object({
+      creator: z.object({
+        id: z.string(),
+        name: z.string()
+      }),
+      title: z.string(),
+      description: z.optional(z.string()),
+      location: z.optional(z.string()),
+      availableTimes: z.array(z.object({
+        startTime: z.date(),
+        endTime: z.date()
+      }))
+    }))
+    .mutation(async ({ input }) => {
+      return uuidv4();
+    }),
+  getAppointmentById: t.procedure
+    .input(z.string())
+    .mutation(async ({ input: id}) => {
+      const availableTimes = [
+        {
+          id: uuidv4(),
+          startTime: addDays(new Date(), 2),
+          endTime: addHours(addDays(new Date(), 2), 2)
+        }
+      ];
+      return {
+        creatorName: "John Doe",
+        title: "John's birthday party",
+        description: "It's gonna be awesome.",
+        location: "Central Park",
+        availableTimes: availableTimes,
+        attendees: [
+          {
+            userName: "Julia",
+            subscribedTimeslotIds: [availableTimes[0].id]
+          },
+          {
+            userName: "Robert",
+            subscribedTimeslotIds: [availableTimes[1].id]
+          },
+          {
+            userName: "Marc",
+            subscribedTimeslotIds: [
+              availableTimes[0].id,
+              availableTimes[1].id
+            ]
+          }
+        ]
+      }
+    })
 });
  
 export type AppRouter = typeof appRouter;
