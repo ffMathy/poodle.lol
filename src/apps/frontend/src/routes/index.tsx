@@ -2,8 +2,6 @@ import { component$, useSignal, useStore, useVisibleTask$ } from '@builder.io/qw
 import type { DocumentHead } from '@builder.io/qwik-city';
 import { trpc } from '../api/client';
 
-import './global.css';
-
 export default component$(() => {
   const userId = useSignal<string>();
 

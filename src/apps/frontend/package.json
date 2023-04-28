@@ -1,11 +1,10 @@
 {
-  "name": "frontend",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
+  "name": "my-qwik-basic-starter",
+  "description": "App with Routing built-in (recommended)",
   "engines": {
     "node": ">=15.0.0"
   },
+  "private": true,
   "scripts": {
     "build": "qwik build",
     "build.client": "vite build",
@@ -16,6 +15,7 @@
     "dev.debug": "node --inspect-brk ./node_modules/vite/bin/vite.js --mode ssr --force",
     "fmt": "prettier --write .",
     "fmt.check": "prettier --check .",
+    "lint": "eslint \"src/**/*.ts*\"",
     "preview": "qwik build preview && vite preview --open",
     "start": "vite --open --mode ssr",
     "qwik": "qwik"
@@ -38,8 +38,5 @@
     "undici": "5.21.0",
     "vite": "4.2.1",
     "vite-tsconfig-paths": "3.5.0"
-  },
-  "__qwik__": {
-    "qwikCity": true
   }
 }
