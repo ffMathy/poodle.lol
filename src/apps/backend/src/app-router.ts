@@ -1,9 +1,12 @@
 import { initTRPC } from '@trpc/server';
-import { v4 as uuidv4 } from 'uuid';
-import { z } from 'zod';
+import { nan, z } from 'zod';
+import { nanoid } from 'nanoid'
 import { addDays, addHours } from 'date-fns'
- 
-const t = initTRPC.create();
+import superjson from 'superjson'; 
+
+const t = initTRPC.create({
+  transformer: superjson
+});
 
 type Attendee = {
   userName: string,
@@ -16,7 +19,7 @@ type Timeslot = {
   endTime: Date
 }
 
-type Appointment = {
+export type Appointment = {
   creatorName: string,
   title: string,
   description?: string,
@@ -27,8 +30,9 @@ type Appointment = {
 
 export const appRouter = t.router({
   createUserId: t.procedure
+    .input(z.void())
     .query(() => {
-      return uuidv4();
+      return nanoid();
     }),
   createAppointment: t.procedure
     .input(z.object({
@@ -45,16 +49,21 @@ export const appRouter = t.router({
       }))
     }))
     .mutation(async ({ input }) => {
-      return uuidv4();
+      return nanoid();
     }),
   getAppointmentById: t.procedure
     .input(z.string())
-    .mutation(async ({ input: id}) => {
+    .query(async () => {
       const availableTimes = [
         {
-          id: uuidv4(),
+          id: nanoid(),
           startTime: addDays(new Date(), 2),
           endTime: addHours(addDays(new Date(), 2), 2)
+        },
+        {
+          id: nanoid(),
+          startTime: addDays(new Date(), 4),
+          endTime: addHours(addDays(new Date(), 4), 2)
         }
       ];
       return {
@@ -80,7 +89,7 @@ export const appRouter = t.router({
             ]
           }
         ]
-      }
+      } as Appointment;
     })
 });
  
