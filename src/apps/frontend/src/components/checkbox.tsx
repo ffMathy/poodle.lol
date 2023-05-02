@@ -2,6 +2,7 @@ import { component$, useSignal } from "@builder.io/qwik";
 import { nanoid } from "nanoid";
 
 export default component$((props: {
+    label: string,
     isChecked: boolean,
     onChange$: (isEnabled: boolean) => void
 }) => {
@@ -31,7 +32,7 @@ export default component$((props: {
                 <span aria-hidden="true" class={`translate-x-0 pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${buttonTextClass}`}></span>
             </button>
             <span class="ml-3 text-sm" id={ariaId}>
-                <span class={`text-gray-900`}>Same times for all dates</span>
+                <span class={`text-gray-900`}>{props.label}</span>
             </span>
         </div>
     </div>

@@ -1,11 +1,16 @@
-import { component$, useComputed$, useSignal, useStore, useTask$, useVisibleTask$ } from '@builder.io/qwik';
+import { component$, useComputed$, useSignal, useStore, useTask$, useVisibleTask$, $ } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
 import { trpc } from '../api/client';
 import DatePicker from '~/components/date-picker';
 import Checkbox from '~/components/checkbox';
 import Combobox from '~/components/combobox';
+import TimePicker, { TimePerDayPicker } from '~/components/time-picker';
+import { setHours, setMinutes } from 'date-fns';
+import { cloneDeep, find, groupBy } from 'lodash';
 
 export default component$(() => {
+  const selectedDates = useSignal(new Array<Date>());
+
   return <form>
     <div class="space-y-6">
       <h2 class="text-base font-semibold leading-7 text-gray-900">New event poll</h2>
@@ -45,26 +50,41 @@ export default component$(() => {
 
         <DurationSection />
 
-        <div class="col-span-full">
-          <label for="about" class="block text-sm font-medium leading-6 text-gray-900">Dates</label>
-          <div class="mt-5">
-            <DatePicker />
-          </div>
-        </div>
+        <DateSection
+          selectedDates={selectedDates.value}
+          onChange$={dates => selectedDates.value = dates}
+        />
 
-        <TimeSection />
+        <TimeSection
+          dates={selectedDates.value}
+        />
       </div>
     </div>
   </form>
 });
+
+const DateSection = component$((props: {
+  selectedDates: Date[],
+  onChange$: (dates: Date[]) => void
+}) => {
+  return <div class="col-span-full">
+    <label for="about" class="block text-sm font-medium leading-6 text-gray-900">Dates</label>
+    <div class="mt-5">
+      <DatePicker
+        selectedDates={props.selectedDates}
+        onChange$={props.onChange$}
+      />
+    </div>
+  </div>
+})
 
 const DurationSection = component$(() => {
   type Duration = { hours: number, minutes: number };
 
   const durations = useComputed$(() => {
     const result = new Array<Duration>();
-    for(let h=0; h < 24; h++) {
-      for(let m=0; m < 60; m += 15) {
+    for (let h = 0; h < 24; h++) {
+      for (let m = 0; m < 60; m += 15) {
         result.push({ hours: h, minutes: m })
       }
     }
@@ -73,7 +93,7 @@ const DurationSection = component$(() => {
   });
 
   const selectedDuration = useSignal<Duration>(() => durations.value[0]);
-  
+
   return <div class="sm:col-span-4">
     <label for="Duration" class="block text-sm font-medium leading-6 text-gray-900">Duration</label>
     <div class="mt-2">
@@ -83,26 +103,71 @@ const DurationSection = component$(() => {
         placeholder='0h 0m'
         onChange$={value => selectedDuration.value = value}
         onRenderText$={duration => {
-          if(!duration.hours)
+          if (!duration.hours)
             return `${duration.minutes}m`;
 
           return `${duration.hours}h ${duration.minutes}m`;
         }}
-    />
+      />
     </div>
   </div>
 });
 
-const TimeSection = component$(() => {
-  const useSameTimesForAllDates = useSignal(true);
+const TimeSection = component$((props: {
+  dates: Date[]
+}) => {
+  type TimesForDate = {
+    date: Date,
+    times: Date[]
+  }
+
+  const useSameTimesForAllDates = useSignal(false);
+
+  const resetTime$ = $((time: Date) =>
+    setMinutes(
+      setHours(
+        time,
+        0),
+      0));
+
+  const copyTimeTo$ = $((time: Date, destination: Date) =>
+    setMinutes(
+      setHours(
+        destination,
+        time.getHours()),
+      time.getMinutes()));
+
+  const timesForDates = useSignal<TimesForDate[]>(props.dates.map(date => ({
+    date,
+    times: [
+      date
+    ]
+  })));
+
+  if (props.dates.length === 0) {
+    return <div class="col-span-full">
+      <label for="about" class="block text-sm font-medium leading-6 text-gray-900">Times</label>
+      <p class="mt-5 text-sm">
+        Select one or more dates first.
+      </p>
+    </div>;
+  }
 
   return <div class="col-span-full">
     <label for="about" class="block text-sm font-medium leading-6 text-gray-900">Times</label>
     <div class="mt-5">
       <Checkbox
+        label='Same time for all dates'
         isChecked={useSameTimesForAllDates.value}
         onChange$={isChecked => useSameTimesForAllDates.value = isChecked}
       />
+    </div>
+    <div class="mt-5">
+      {props.dates.map(date =>
+        <TimePerDayPicker
+          day={date}
+          onChange$={times => {}}
+        />)}
     </div>
   </div>
 })

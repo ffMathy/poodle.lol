@@ -20,7 +20,7 @@ export default component$(() => {
         <RouterHead />
       </head>
       <body lang="en" class="font-sans antialiased text-gray-600 min-h-full flex flex-col [overflow-anchor:none]">
-        <div class="mx-auto max-w-container px-4 pt-4 sm:px-6 lg:flex lg:px-8">
+        <div class="mx-auto max-w-container px-4 pt-4">
           <RouterOutlet />
           <ServiceWorkerRegister />
         </div>

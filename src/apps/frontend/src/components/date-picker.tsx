@@ -1,7 +1,10 @@
 import { component$, useComputed$, useSignal } from "@builder.io/qwik";
 import { addDays, addMonths, format, getMonth, isMonday, isSunday, isToday as isTodayFn, lastDayOfMonth, nextSunday, previousMonday } from "date-fns";
 
-export default component$(() => {
+export default component$((props: {
+  selectedDates: Date[],
+  onChange$: (dates: Date[]) => void
+}) => {
   const startOfCurrentMonthDate = useSignal(new Date());
 
   const startDate = useComputed$(() => {
@@ -26,8 +29,6 @@ export default component$(() => {
 
     return dates;
   });
-
-  const selectedDates = useSignal<Date[]>([]);
 
   return (
     <div class="mt-0 text-center lg:col-start-8 lg:col-end-13 lg:row-start-1 xl:col-start-9">
@@ -70,7 +71,7 @@ export default component$(() => {
           const isCurrentMonth = getMonth(date) === getMonth(startOfCurrentMonthDate.value);
           const isToday = isTodayFn(date);
 
-          const isSelected = !!selectedDates.value.find(x => x.getTime() === date.getTime());
+          const isSelected = !!props.selectedDates.find(x => x.getTime() === date.getTime());
 
           const isTopLeftDay = index === 0;
           const isTopRightDay = index === 6;
@@ -106,29 +107,15 @@ export default component$(() => {
             "rounded-full",
             (isSelected) && "bg-indigo-600"
           ];
-          /* <!--
-            Always include: "py-1.5 hover:bg-gray-100 focus:z-10"
-            Is current month, include: "bg-white"
-            Is not current month, include: "bg-gray-50"
-            Is selected or is today, include: "font-semibold"
-            Is selected, include: "text-white"
-            Is not selected, is not today, and is current month, include: "text-gray-900"
-            Is not selected, is not today, and is not current month, include: "text-gray-400"
-            Is today and is not selected, include: "text-indigo-600"
 
-            Top left day, include: "rounded-tl-lg"
-            Top right day, include: "rounded-tr-lg"
-            Bottom left day, include: "rounded-bl-lg"
-            Bottom right day, include: "rounded-br-lg"
-          --> */
           return <button 
             type="button" 
             class={buttonClasses.filter(x => x).join(' ')}
             onClick$={() => {
-              if(!selectedDates.value.includes(date)) {
-                selectedDates.value = [...selectedDates.value, date];
+              if(!props.selectedDates.includes(date)) {
+                props.onChange$([...props.selectedDates, date]);
               } else {
-                selectedDates.value = selectedDates.value.filter(x => x !== date);
+                props.onChange$(props.selectedDates.filter(x => x !== date));
               }
             }}
           >
