@@ -32,6 +32,7 @@
   "scripts": {
     "build": "tsc",
     "lint": "tsc",
-    "dev": "nodemon --watch './**/*.ts' --exec 'node --experimental-specifier-resolution=node --loader ts-node/esm' ./index.ts"
+    "dev": "nodemon --watch './**/*.ts' --exec 'node --experimental-specifier-resolution=node --loader ts-node/esm' ./index.ts",
+    "deploy": "chmod +x ./deploy.sh && ./deploy.sh"
   }
 }

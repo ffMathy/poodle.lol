@@ -1,8 +1,7 @@
-import { Resource, component$, useResource$, useTask$ } from '@builder.io/qwik';
-import { useLocation } from '@builder.io/qwik-city';
+import { Resource, component$, useResource$ } from '@builder.io/qwik';
 import { trpc } from '../../api/client';
 import { groupBy, keys } from "lodash";
-import { format, getDate, getDay, getTime } from 'date-fns';
+import { format } from 'date-fns';
 
 type Appointment = Awaited<ReturnType<typeof trpc.getAppointmentById.query>>;
 
