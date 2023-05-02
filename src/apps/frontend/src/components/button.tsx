@@ -1,4 +1,4 @@
-import { component$ } from "@builder.io/qwik";
+import { JSXNode, Slot, component$ } from "@builder.io/qwik";
 
 export default component$((props: {
     label: string,
@@ -8,8 +8,8 @@ export default component$((props: {
     return <button 
         type="button" 
         onClick$={props.onClick$}
-        class={`rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 ${props.class ?? ""}`}
+        class={`inline-flex items-center gap-x-1.5 rounded-md px-2.5 py-1.5 text-sm font-semibold shadow-sm bg-white text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 ${props.class ?? ""}`}
     >
-        {props.label}
+        <Slot name="icon" /> {props.label}
     </button>
 });
