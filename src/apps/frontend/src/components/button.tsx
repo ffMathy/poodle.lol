@@ -2,9 +2,14 @@ import { component$ } from "@builder.io/qwik";
 
 export default component$((props: {
     label: string,
-    class?: string
+    class?: string,
+    onClick$: () => void
 }) => {
-    return <button type="button" class={`rounded bg-indigo-600 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 ${props.class ?? ""}`}>
+    return <button 
+        type="button" 
+        onClick$={props.onClick$}
+        class={`rounded bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 ${props.class ?? ""}`}
+    >
         {props.label}
     </button>
 });

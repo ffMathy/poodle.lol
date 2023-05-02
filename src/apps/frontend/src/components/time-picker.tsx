@@ -5,6 +5,7 @@ import Button from "./button";
 
 const TimePicker = component$((props: {
     selectedTime?: Date,
+    class?: string,
     onChange$: (time: Date) => void
 }) => {
     const times = useComputed$(() => {
@@ -24,6 +25,7 @@ const TimePicker = component$((props: {
     });
 
     return <Combobox<Date>
+        class={props.class}
         values={times.value}
         selectedValue={props.selectedTime}
         placeholder={format(setMinutes(setHours(new Date(), 0), 0), "p")}
@@ -42,12 +44,13 @@ export const TimePerDayPicker = component$((props: {
     const times = useSignal<Array<Date>>([props.day]);
 
     return <>
-        <label for="about" class="block text-sm font-light leading-6 text-gray-900">
+        <label for="about" class="block text-sm font-light leading-6 text-gray-900 mb-2">
             {format(props.day, "PPP")}
         </label>
         <div class="mb-5">
             {times.value.map((time, timeIndex) =>
                 <TimePicker
+                    class="mb-2"
                     selectedTime={time}
                     onChange$={newTime => {
                         const timesCopy = [...times.value];
@@ -64,6 +67,9 @@ export const TimePerDayPicker = component$((props: {
             <Button 
                 class="mt-1"
                 label="Add time" 
+                onClick$={() => {
+                    times.value = [...times.value, props.day];
+                }}
             />
         </div>
     </>

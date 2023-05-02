@@ -3,6 +3,7 @@ import { defer } from "lodash";
 
 export default component$(<T extends unknown>(props: {
     placeholder?: string,
+    class?: string,
     values: T[],
     onRenderText$: (value: T) => string,
     selectedValue?: T,
@@ -17,7 +18,7 @@ export default component$(<T extends unknown>(props: {
         "true" :
         "false";
 
-    return <div class="relative mt-0">
+    return <div class={`relative mt-0 ${props.class ?? ""}`}>
         <input
             id="combobox"
             type="text"
