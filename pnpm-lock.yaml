@@ -106,11 +106,11 @@ importers:
         version: 3.21.4
     devDependencies:
       '@builder.io/qwik':
-        specifier: ^0.100.0
-        version: 0.100.0(undici@5.21.0)
+        specifier: ^1.0.0
+        version: 1.0.0(undici@5.21.0)
       '@builder.io/qwik-city':
-        specifier: ^0.100.0
-        version: 0.100.0(@builder.io/qwik@0.100.0)
+        specifier: ^1.0.0
+        version: 1.0.0
       '@tailwindcss/forms':
         specifier: ^0.5.3
         version: 0.5.3(tailwindcss@3.3.2)
@@ -155,15 +155,12 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /@builder.io/qwik-city@0.100.0(@builder.io/qwik@0.100.0):
-    resolution: {integrity: sha512-EEZ8q10vmEjOOe5qQIel+jLcuuFYOjakIIgHt5KOWnY/L0HBw9xzFDkFDcdmPJlrCmHTm3y4T1ZtqKPEFNgO9w==}
+  /@builder.io/qwik-city@1.0.0:
+    resolution: {integrity: sha512-nHlDsvYHRWpSmRgg3bb93shn0p1OeMLvBYyIINitGDPxRSK1RyddtJXFAE24MlEEwzetF82xSte3SiC55oPUaQ==}
     engines: {node: '>=16.8.0 <18.0.0 || >=18.11'}
-    peerDependencies:
-      '@builder.io/qwik': '>=0.22.0'
     dependencies:
-      '@builder.io/qwik': 0.100.0(undici@5.21.0)
       '@mdx-js/mdx': 2.3.0
-      '@types/mdx': 2.0.3
+      '@types/mdx': 2.0.5
       source-map: 0.7.4
       vfile: 5.3.7
       zod: 3.21.4
@@ -171,8 +168,8 @@ packages:
       - supports-color
     dev: true
 
-  /@builder.io/qwik@0.100.0(undici@5.21.0):
-    resolution: {integrity: sha512-p2DAHZTkPFVN3fz3I6Ael6pLLdlzf89owPJVAIoQ9vt5jULnDJRf096qGc84Y+gaoqfoFWBYHYVnHOP0fnRjQg==}
+  /@builder.io/qwik@1.0.0(undici@5.21.0):
+    resolution: {integrity: sha512-U1eTIKTBUiW2dbPMCaTzS7K1bMCI9ovtfsvdduwnVThGXRSrX+v2X4U/UmHHPzfOjC55X5wYLc17cw5EwFBVVA==}
     engines: {node: '>=16.8.0 <18.0.0 || >=18.11'}
     hasBin: true
     peerDependencies:
@@ -472,7 +469,7 @@ packages:
     resolution: {integrity: sha512-jLuwRlz8DQfQNiUCJR50Y09CGPq3fLtmtUQfVrj79E0JWu3dvsVcxVIcfhR5h0iXu+/z++zDrYeiJqifRynJkA==}
     dependencies:
       '@types/estree-jsx': 1.0.0
-      '@types/mdx': 2.0.3
+      '@types/mdx': 2.0.5
       estree-util-build-jsx: 2.2.2
       estree-util-is-identifier-name: 2.1.0
       estree-util-to-js: 1.2.0
@@ -855,8 +852,8 @@ packages:
       '@types/unist': 2.0.6
     dev: true
 
-  /@types/mdx@2.0.3:
-    resolution: {integrity: sha512-IgHxcT3RC8LzFLhKwP3gbMPeaK7BM9eBH46OdapPA7yvuIUJ8H6zHZV53J8hGZcTSnt95jANt+rTBNUUc22ACQ==}
+  /@types/mdx@2.0.5:
+    resolution: {integrity: sha512-76CqzuD6Q7LC+AtbPqrvD9AqsN0k8bsYo2bM2J8pmNldP1aIPAbzUQ7QbobyXL4eLr1wK5x8FZFe8eF/ubRuBg==}
     dev: true
 
   /@types/mime@1.3.2:

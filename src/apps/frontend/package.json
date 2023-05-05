@@ -35,8 +35,8 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
-    "@builder.io/qwik": "^0.100.0",
-    "@builder.io/qwik-city": "^0.100.0",
+    "@builder.io/qwik": "^1.0.0",
+    "@builder.io/qwik-city": "^1.0.0",
     "@tailwindcss/forms": "^0.5.3",
     "@types/lodash": "^4.14.194",
     "@types/node": "^18.16.2",
