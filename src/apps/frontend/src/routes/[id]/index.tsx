@@ -2,15 +2,14 @@ import { Resource, component$, useResource$ } from '@builder.io/qwik';
 import { trpc } from '../../api/client';
 import { groupBy, keys } from "lodash";
 import { format } from 'date-fns';
-
-type Appointment = Awaited<ReturnType<typeof trpc.getAppointmentById.query>>;
+import { Appointment } from 'backend/src/app-router';
 
 type TimeSlot = Appointment["availableTimes"][0];
 type Attendee = Appointment["attendees"][0];
 
 export default component$(() => {
     const appointmentResource = useResource$(async () => {
-        return await trpc.getAppointmentById.query("lol");
+        return await trpc.getAppointmentById.useQuery("lol").data!;
     });
 
     return <Resource
