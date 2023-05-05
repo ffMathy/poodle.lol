@@ -22,12 +22,17 @@
     "qwik": "qwik"
   },
   "dependencies": {
+    "@tanstack/react-query": "^4.29.5",
     "@trpc/client": "10.15.0",
+    "@trpc/next": "^10.21.2",
+    "@trpc/react-query": "^10.21.2",
+    "@trpc/server": "^10.21.2",
     "backend": "workspace:*",
     "date-fns": "^2.29.3",
     "lodash": "^4.17.21",
     "nanoid": "^4.0.2",
-    "superjson": "^1.12.3"
+    "superjson": "^1.12.3",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@builder.io/qwik": "^0.100.0",
