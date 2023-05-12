@@ -9,17 +9,17 @@
   "scripts": {
     "vercel-build": "npm run build.frontend && npm run build.backend",
     "build": "npm run build.frontend && npm run build.backend",
-    "build.frontend": "vite build",
-    "build.preview": "vite build --ssr src/frontend/entry.preview.tsx -c vite.config.client.ts",
+    "build.frontend": "vite build -c vite.config.frontend.ts",
+    "build.preview": "vite build --ssr src/frontend/entry.preview.tsx -c vite.config.frontend.ts",
     "build.backend": "vite build -c vite.config.backend.ts",
     "build.types": "tsc --incremental --noEmit",
     "deploy": "vercel deploy",
-    "dev": "vite --mode ssr",
-    "dev.debug": "node --inspect-brk ./node_modules/vite/bin/vite.js --mode ssr --force",
+    "dev": "vite --mode ssr -c vite.config.frontend.ts",
+    "dev.debug": "node --inspect-brk ./node_modules/vite/bin/vite.js --mode ssr --force -c vite.config.frontend.ts",
     "fmt": "prettier --write .",
     "fmt.check": "prettier --check .",
     "preview": "qwik build preview && vite preview --open",
-    "start": "vite --open --mode ssr"
+    "start": "vite --open --mode ssr -c vite.config.frontend.ts"
   },
   "dependencies": {
     "@tanstack/react-query": "^4.29.5",
