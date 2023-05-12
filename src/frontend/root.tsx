@@ -5,7 +5,7 @@ import { trpc } from './client';
 
 import "./global.css";
 
-export default trpc.withTRPC(component$(() => {
+export default component$(() => {
   /**
    * The root of a QwikCity site always start with the <QwikCityProvider> component,
    * immediately followed by the document's <head> and <body>.
@@ -28,4 +28,4 @@ export default trpc.withTRPC(component$(() => {
       </body>
     </QwikCityProvider>
   );
-}));
+});

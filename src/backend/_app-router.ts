@@ -97,5 +97,5 @@ export const appRouter = t.router({
       } as Appointment;
     })
 });
- 
+
 export type AppRouter = typeof appRouter;

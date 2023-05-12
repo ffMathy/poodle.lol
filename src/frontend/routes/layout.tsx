@@ -1,8 +1,8 @@
 import { component$, Slot } from '@builder.io/qwik';
 import { routeLoader$ } from '@builder.io/qwik-city';
 
-import Header from '~/components/header';
-import Footer from '~/components/footer';
+import Header from '~/frontend/components/header';
+import Footer from '~/frontend/components/footer';
 
 export default component$(() => {
   return (

@@ -1,5 +1,5 @@
 import { Resource, component$, useResource$ } from '@builder.io/qwik';
-import { Appointment } from '../../../pages/api/_src/app-router';
+import { Appointment } from '../../../backend/_app-router';
 import { groupBy, keys } from "lodash";
 import { format } from 'date-fns';
 import { trpc } from '../../client';

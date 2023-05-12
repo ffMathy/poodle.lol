@@ -1,6 +1,6 @@
 // @filename: client.ts
 import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
-import type { AppRouter } from '../pages/api/_src/app-router';
+import type { AppRouter } from '../backend/_app-router';
 import superjson from 'superjson';
 import { createTRPCNext } from '@trpc/next';
 
@@ -10,12 +10,12 @@ function getBaseUrl() {
     return '';
   if (process.env.VERCEL_URL)
     // reference for vercel.com
-    return `https://${process.env.VERCEL_URL}`;
+    return `https://${process.env.VERCEL_URL}/api`;
   if (process.env.RENDER_INTERNAL_HOSTNAME)
     // reference for render.com
-    return `http://${process.env.RENDER_INTERNAL_HOSTNAME}:${process.env.PORT}`;
+    return `http://${process.env.RENDER_INTERNAL_HOSTNAME}:${process.env.PORT}/api`;
   // assume localhost
-  return `http://localhost:${process.env.PORT ?? 3000}`;
+  return `http://localhost:${process.env.PORT ?? 3000}/api`;
 }
  
 //@ts-ignore

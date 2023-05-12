@@ -5,7 +5,11 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig(() => {
   return {
-    plugins: [qwikCity(), qwikVite(), tsconfigPaths()],
+    plugins: [
+      qwikCity({ routesDir: 'src/frontend/routes' }), 
+      qwikVite({ srcDir: 'src/frontend' }), 
+      tsconfigPaths()
+    ],
     preview: {
       headers: {
         'Cache-Control': 'public, max-age=600',
