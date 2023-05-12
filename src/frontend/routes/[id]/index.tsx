@@ -9,7 +9,7 @@ type Attendee = Appointment["attendees"][0];
 
 export default component$(() => {
     const appointmentResource = useResource$(async () => {
-        return await trpc.getAppointmentById.useQuery("lol").data!;
+        return await trpc.getAppointmentById.query("lol")!;
     });
 
     return <Resource

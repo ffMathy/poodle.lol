@@ -12,7 +12,7 @@ type Context = inferAsyncReturnType<typeof createContext>;
 
 const app = express();
 app.use(
-  '/trpc',
+  '/api/trpc',
   trpcExpress.createExpressMiddleware({
       router: appRouter,
       createContext,

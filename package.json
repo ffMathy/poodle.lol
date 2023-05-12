@@ -7,10 +7,11 @@
   "packageManager": "pnpm@7.15.0",
   "private": true,
   "scripts": {
-    "build": "qwik build",
-    "build.client": "vite build",
-    "build.preview": "vite build --ssr src/entry.preview.tsx",
-    "build.server": "vite build -c adapters/vercel-edge/vite.config.ts",
+    "vercel-build": "npm run build.frontend && npm run build.backend",
+    "build": "npm run build.frontend && npm run build.backend",
+    "build.frontend": "vite build",
+    "build.preview": "vite build --ssr src/frontend/entry.preview.tsx -c vite.config.client.ts",
+    "build.backend": "vite build -c vite.config.backend.ts",
     "build.types": "tsc --incremental --noEmit",
     "deploy": "vercel deploy",
     "dev": "vite --mode ssr",
@@ -18,8 +19,7 @@
     "fmt": "prettier --write .",
     "fmt.check": "prettier --check .",
     "preview": "qwik build preview && vite preview --open",
-    "start": "vite --open --mode ssr",
-    "qwik": "qwik"
+    "start": "vite --open --mode ssr"
   },
   "dependencies": {
     "@tanstack/react-query": "^4.29.5",

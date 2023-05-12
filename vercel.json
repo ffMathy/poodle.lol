@@ -2,14 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "src/backend/index.ts",
+      "src": "dist/backend/index.mjs",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "src/backend/index.ts"
+      "dest": "dist/backend/index.mjs"
     }
   ]
 }

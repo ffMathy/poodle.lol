@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite';
 import { qwikVite } from '@builder.io/qwik/optimizer';
 import { qwikCity } from '@builder.io/qwik-city/vite';
-import { vercelEdgeAdapter } from '@builder.io/qwik-city/adapters/vercel-edge/vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig(() => {
@@ -9,23 +8,16 @@ export default defineConfig(() => {
     build: {
       ssr: true,
       rollupOptions: {
-        input: ['src/frontend/entry.vercel-edge.tsx', '@qwik-city-plan'],
+        input: ['src/backend/index.ts'],
+        output: {
+          esModule: true
+        }
       },
-      outDir: '.vercel/output/functions/_qwik-city.func',
+      outDir: 'dist/backend',
     },
     ssr: {
       external: ["express"]
     },
-    plugins: [
-      qwikCity({ 
-        routesDir: 'src/frontend/routes'
-      }), 
-      qwikVite({ 
-        srcDir: 'src/frontend'
-      }),
-      vercelEdgeAdapter(),
-      tsconfigPaths()
-    ],
     preview: {
       headers: {
         'Cache-Control': 'public, max-age=600',

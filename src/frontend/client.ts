@@ -2,7 +2,6 @@
 import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
 import type { AppRouter } from '../backend/_app-router';
 import superjson from 'superjson';
-import { createTRPCNext } from '@trpc/next';
 
 function getBaseUrl() {
   if (typeof window !== 'undefined')
@@ -17,22 +16,13 @@ function getBaseUrl() {
   // assume localhost
   return `http://localhost:${process.env.PORT ?? 3000}/api`;
 }
- 
+
 //@ts-ignore
-export const trpc = createTRPCNext<AppRouter>({
-  config: () => {
-    return {
-      transformer: superjson,
-      links: [
-        httpBatchLink({
-          url: `${getBaseUrl()}/api/trpc`,
-          async headers() {
-            return {
-            };
-          },
-        }),
-      ],
-    };
-  },
-  ssr: false
+export const trpc = createTRPCProxyClient<AppRouter>({
+  transformer: superjson,
+  links: [
+    httpBatchLink({
+      url: `${getBaseUrl()}/api/trpc`
+    }),
+  ],
 });
