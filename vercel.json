@@ -5,6 +5,10 @@
     {
       "src": "dist/backend/index.mjs",
       "use": "@vercel/node"
+    }, 
+    {
+      "src": ".vercel/output/functions/_qwik-city.func/entry.vercel-edge.js",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -14,7 +18,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/"
+      "dest": ".vercel/output/functions/_qwik-city.func/entry.vercel-edge.js"
     }
   ]
 }
