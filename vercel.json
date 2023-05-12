@@ -11,6 +11,10 @@
     {
       "src": "/api/(.*)",
       "dest": "dist/backend/index.mjs"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/"
     }
   ]
 }

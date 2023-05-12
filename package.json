@@ -7,7 +7,7 @@
   "packageManager": "pnpm@7.15.0",
   "private": true,
   "scripts": {
-    "vercel-build": "npm run build.frontend && npm run build.backend",
+    "vercel-build": "npm run build",
     "build": "npm run build.frontend && npm run build.backend",
     "build.frontend": "vite build -c vite.config.frontend.ts",
     "build.preview": "vite build --ssr src/frontend/entry.preview.tsx -c vite.config.frontend.ts",
