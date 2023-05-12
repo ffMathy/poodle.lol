@@ -1,6 +1,6 @@
 // @filename: client.ts
 import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
-import type { AppRouter } from 'backend';
+import type { AppRouter } from '../pages/api/_src/app-router';
 import superjson from 'superjson';
 import { createTRPCNext } from '@trpc/next';
 

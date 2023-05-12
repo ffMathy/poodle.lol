@@ -1,6 +1,6 @@
 import { component$, useComputed$, useSignal, useStore, useTask$, useVisibleTask$, $, JSXNode, Slot } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
-import { trpc } from '../api/client';
+import { trpc } from '../client';
 import DatePicker from '~/components/date-picker';
 import Checkbox from '~/components/checkbox';
 import Combobox from '~/components/combobox';

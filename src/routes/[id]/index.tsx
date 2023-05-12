@@ -1,8 +1,8 @@
 import { Resource, component$, useResource$ } from '@builder.io/qwik';
-import { trpc } from '../../api/client';
+import { Appointment } from '../../../pages/api/_src/app-router';
 import { groupBy, keys } from "lodash";
 import { format } from 'date-fns';
-import { Appointment } from 'backend/src/app-router';
+import { trpc } from '../../client';
 
 type TimeSlot = Appointment["availableTimes"][0];
 type Attendee = Appointment["attendees"][0];
