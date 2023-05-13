@@ -13,7 +13,7 @@ export default defineConfig(() => {
           esModule: true
         }
       },
-      outDir: 'dist/backend',
+      outDir: './output/backend',
     },
     ssr: {
       external: ["express"]

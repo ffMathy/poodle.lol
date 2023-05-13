@@ -11,7 +11,9 @@ export default defineConfig(() => {
       rollupOptions: {
         input: ['src/frontend/entry.vercel-edge.tsx', '@qwik-city-plan'],
       },
-      outDir: '.vercel/output/functions/_qwik-city.func',
+      outDir: './output/frontend',
+      emptyOutDir: true,
+      sourcemap: true
     },
     ssr: {
       external: ["express"]
@@ -21,9 +23,14 @@ export default defineConfig(() => {
         routesDir: 'src/frontend/routes'
       }), 
       qwikVite({ 
-        srcDir: 'src/frontend'
+        srcDir: 'src/frontend',
+        client: {
+          outDir: './output/frontend'
+        }
       }),
-      vercelEdgeAdapter(),
+      vercelEdgeAdapter({
+        staticPaths: ["src/frontend/public"]
+      }),
       tsconfigPaths()
     ],
     preview: {

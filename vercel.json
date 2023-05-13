@@ -3,22 +3,22 @@
   "buildCommand": "npm run build",
   "builds": [
     {
-      "src": "dist/backend/index.mjs",
+      "src": "output/backend/index.mjs",
       "use": "@vercel/node"
     }, 
     {
-      "src": ".vercel/output/functions/_qwik-city.func/entry.vercel-edge.js",
+      "src": "output/static/**/*",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "dist/backend/index.mjs"
+      "dest": "output/backend/index.mjs"
     },
     {
       "src": "/(.*)",
-      "dest": ".vercel/output/functions/_qwik-city.func/entry.vercel-edge.js"
+      "dest": "output/static/entry.vercel-edge.js"
     }
   ]
 }
