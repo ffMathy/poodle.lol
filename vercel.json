@@ -1,27 +1,13 @@
 {
-  "version": 2,
-  "buildCommand": "npm run build",
-  "outputDirectory": ".",
-  "installCommand": "npm i",
-  "developmentCommand": "vite -c vite.config.frontend.ts --port $PORT",
-  "builds": [
+  "headers": [
     {
-      "src": "output/api/index.mjs",
-      "use": "@vercel/node"
-    }, 
-    {
-      "src": "output/static/**/*",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": ".vercel/output/functions/output/api/index.mjs.func/output/api/index.mjs"
-    },
-    {
-      "src": "/(.*)",
-      "dest": ".vercel/output/static/output/static/entry.vercel-edge.mjs"
+      "source": "/build/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, s-maxage=31536000, immutable"
+        }
+      ]
     }
   ]
 }

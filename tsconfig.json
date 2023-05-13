@@ -13,17 +13,13 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "incremental": true,
-    "outDir": "build",
     "isolatedModules": true,
-    "allowSyntheticDefaultImports": true,
+    "outDir": "tmp",
     "noEmit": true,
     "types": ["node", "vite/client"],
     "paths": {
       "~/*": ["./src/*"]
     }
   },
-  "include": [
-    "src/static", 
-    "src/api"
-  ]
+  "include": ["src"]
 }

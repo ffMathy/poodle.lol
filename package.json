@@ -6,19 +6,20 @@
   },
   "private": true,
   "scripts": {
-    "vercel-build": "npm run build",
-    "build": "npm run build.frontend && npm run build.backend",
-    "build.frontend": "vite build -c vite.config.frontend.ts",
-    "build.preview": "vite build --ssr src/frontend/entry.preview.tsx -c vite.config.frontend.ts",
-    "build.backend": "vite build -c vite.config.backend.ts",
+    "build": "qwik build",
+    "build.client": "vite build",
+    "build.preview": "vite build --ssr src/entry.preview.tsx",
+    "build.server": "vite build -c adapters/vercel-edge/vite.config.ts",
     "build.types": "tsc --incremental --noEmit",
     "deploy": "vercel deploy",
-    "dev": "vite --mode ssr -c vite.config.frontend.ts",
-    "dev.debug": "node --inspect-brk ./node_modules/vite/bin/vite.js --mode ssr --force -c vite.config.frontend.ts",
+    "dev": "vite --mode ssr",
+    "dev.debug": "node --inspect-brk ./node_modules/vite/bin/vite.js --mode ssr --force",
     "fmt": "prettier --write .",
     "fmt.check": "prettier --check .",
+    "lint": "eslint \"src/**/*.ts*\"",
     "preview": "qwik build preview && vite preview --open",
-    "start": "vite --open --mode ssr -c vite.config.frontend.ts"
+    "start": "vite --open --mode ssr",
+    "qwik": "qwik"
   },
   "dependencies": {
     "@tanstack/react-query": "^4.29.5",
@@ -46,15 +47,17 @@
     "@types/node": "^18.16.2",
     "@types/uuid": "^9.0.1",
     "autoprefixer": "^10.4.13",
+    "move-file-cli": "^3.0.0",
     "nodemon": "^2.0.22",
     "postcss": "^8.4.16",
     "prettier": "2.8.6",
+    "rimraf": "^5.0.0",
     "tailwindcss": "^3.3.2",
     "ts-node": "^10.9.1",
     "typescript": "5.0.2",
     "undici": "5.21.0",
     "vercel": "^28.4.17",
     "vite": "4.2.1",
-    "vite-tsconfig-paths": "3.5.0"
+    "vite-tsconfig-paths": "4.2.0"
   }
 }

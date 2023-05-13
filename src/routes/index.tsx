@@ -1,38 +1,34 @@
-import { component$, useComputed$, useSignal, useStore, useTask$, useVisibleTask$, $, JSXNode, Slot } from '@builder.io/qwik';
-import type { DocumentHead } from '@builder.io/qwik-city';
-import { trpc } from '../client';
-import DatePicker from '~/static/components/date-picker';
-import Checkbox from '~/static/components/checkbox';
-import Combobox from '~/static/components/combobox';
-import TimePicker, { TimePerDayPicker } from '~/static/components/time-picker';
+import { component$, useComputed$, useSignal, $, Slot } from '@builder.io/qwik';
+import { DocumentHead, Form, routeAction$, z, zod$ } from '@builder.io/qwik-city';
+import DatePicker from '~/components/date-picker';
+import Checkbox from '~/components/checkbox';
+import Combobox from '~/components/combobox';
+import { TimePerDayPicker } from '~/components/time-picker';
 import { setHours, setMinutes } from 'date-fns';
-import { cloneDeep, find, groupBy } from 'lodash';
 
-const Section = component$((props: {
-  title: string,
-  description: string
-}) => {
-  return <div class="space-y-10 divide-y divide-gray-900/10 mb-10">
-    <div class="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3">
-      <div class="px-4 sm:px-0">
-        <h2 class="text-base font-semibold leading-7 text-gray-900">{props.title}</h2>
-        <p class="mt-1 text-sm leading-6 text-gray-600">{props.description}</p>
-      </div>
-      <div class="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
-        <div class="px-4 py-6 sm:p-8">
-          <div class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <Slot />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-})
+export const useCreateAppointment = routeAction$(
+  async (data, requestEvent) => {
+
+  },
+  zod$({
+    creator: z.object({
+      id: z.string(),
+      name: z.string()
+    }),
+    title: z.string(),
+    description: z.optional(z.string()),
+    location: z.optional(z.string()),
+    availableTimes: z.array(z.object({
+      startTime: z.date(),
+      endTime: z.date()
+    }))
+  }));
 
 export default component$(() => {
+  const createAppointment = useCreateAppointment();
   const selectedDates = useSignal(new Array<Date>());
 
-  return <>
+  return <Form action={createAppointment}>
     <Section
       title="What"
       description="Describe what your event is about."
@@ -81,8 +77,44 @@ export default component$(() => {
         dates={selectedDates.value}
       />
     </Section>
-  </>
+
+    <Section>
+      <button 
+        type="submit" 
+        class="place-self-center w-64 col-span-full rounded-full bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+      >
+        Save
+      </button>
+    </Section>
+  </Form>
 });
+
+const Section = component$((props: {
+  title?: string,
+  description?: string
+}) => {
+  const classNameAdd = props.title || props.description ?
+    "bg-white shadow-sm ring-1 ring-gray-900/5" :
+    "";
+  return <div class="space-y-10 divide-y divide-gray-900/10 mb-10">
+    <div class="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3">
+      <div class="px-4 sm:px-0">
+        {props.title && 
+          <h2 class="text-base font-semibold leading-7 text-gray-900">{props.title}</h2>}
+
+        {props.description && 
+          <p class="mt-1 text-sm leading-6 text-gray-600">{props.description}</p>}
+      </div>
+      <div class={`${classNameAdd} sm:rounded-xl md:col-span-2`}>
+        <div class="px-4 py-6 sm:p-8">
+          <div class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <Slot />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+})
 
 const DateSection = component$((props: {
   selectedDates: Date[],
