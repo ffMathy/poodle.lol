@@ -66,13 +66,13 @@ export default component$(() => {
     location: ""
   });
 
-  function onSelectedDatesChanged(dates: Date[]): void {
+  const onSelectedDatesChanged = $((dates: Date[]) => {
     selectedDates.value = dates;
     store.availableTimes = dates.map(date => ({
       startTime: startOfDay(date),
       endTime: endOfDay(date)
     }));
-  }
+  });
 
   return <>
     <Section
@@ -126,7 +126,7 @@ export default component$(() => {
 
     <Section
       title="When"
-      description="Describe what your event is about."
+      description="Add the times that are valid for attendees to pick from."
     >
       <DurationSection />
 
