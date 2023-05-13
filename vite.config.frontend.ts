@@ -22,7 +22,8 @@ export default defineConfig(() => {
         routesDir: 'src/static/routes'
       }), 
       qwikVite({ 
-        srcDir: 'src/static'
+        srcDir: 'src/static',
+        client: {}
       }),
       // vercelEdgeAdapter({
       //   staticPaths: ["src/static/public"],

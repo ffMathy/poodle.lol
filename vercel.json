@@ -1,7 +1,7 @@
 {
   "version": 2,
   "buildCommand": "npm run build",
-  "outputDirectory": ".vercel/output",
+  "outputDirectory": ".",
   "installCommand": "npm i",
   "developmentCommand": "vite -c vite.config.frontend.ts --port $PORT",
   "builds": [
@@ -14,7 +14,6 @@
       "use": "@vercel/static"
     }
   ],
-  
   "routes": [
     {
       "src": "/api/(.*)",
