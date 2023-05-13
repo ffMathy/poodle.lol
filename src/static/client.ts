@@ -1,6 +1,6 @@
 // @filename: client.ts
 import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
-import type { AppRouter } from '../backend/_app-router';
+import type { AppRouter } from '../api/_app-router';
 import superjson from 'superjson';
 
 function getBaseUrl() {

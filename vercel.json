@@ -1,7 +1,8 @@
 {
   "version": 2,
   "buildCommand": "npm run build",
-  "outputDirectory": "output",
+  "outputDirectory": ".vercel/output",
+  "developmentCommand": "vite -c vite.config.frontend.ts --port $PORT",
   "builds": [
     {
       "src": "output/api/index.mjs",

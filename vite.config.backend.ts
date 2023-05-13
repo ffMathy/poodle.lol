@@ -1,6 +1,4 @@
 import { defineConfig } from 'vite';
-import { qwikVite } from '@builder.io/qwik/optimizer';
-import { qwikCity } from '@builder.io/qwik-city/vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig(() => {
@@ -8,12 +6,13 @@ export default defineConfig(() => {
     build: {
       ssr: true,
       rollupOptions: {
-        input: ['src/backend/index.ts'],
+        input: ['src/api/index.ts'],
         output: {
           esModule: true
         }
       },
-      outDir: './output/api',
+      sourcemap: true,
+      outDir: './.vercel/output/api',
     },
     ssr: {
       external: ["express"]

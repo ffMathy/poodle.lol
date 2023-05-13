@@ -9,29 +9,25 @@ export default defineConfig(() => {
     build: {
       ssr: true,
       rollupOptions: {
-        input: ['src/frontend/entry.vercel-edge.tsx', '@qwik-city-plan'],
+        input: ['src/static/entry.vercel-edge.tsx', '@qwik-city-plan'],
       },
-      outDir: './output/frontend',
-      emptyOutDir: true,
-      sourcemap: true
+      sourcemap: true,
+      outDir: './.vercel/output/static',
     },
     ssr: {
       external: ["express"]
     },
     plugins: [
       qwikCity({ 
-        routesDir: 'src/frontend/routes'
+        routesDir: 'src/static/routes'
       }), 
       qwikVite({ 
-        srcDir: 'src/frontend',
-        client: {
-          outDir: './output/frontend'
-        }
+        srcDir: 'src/static'
       }),
-      vercelEdgeAdapter({
-        staticPaths: ["src/frontend/public"],
-        outputConfig: false
-      }),
+      // vercelEdgeAdapter({
+      //   staticPaths: ["src/static/public"],
+      //   outputConfig: false
+      // }),
       tsconfigPaths()
     ],
     preview: {

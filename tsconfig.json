@@ -23,7 +23,7 @@
     }
   },
   "include": [
-    "src/backend", 
-    "src/frontend"
+    "src/static", 
+    "src/api"
   ]
 }

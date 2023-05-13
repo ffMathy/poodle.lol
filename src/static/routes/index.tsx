@@ -1,10 +1,10 @@
 import { component$, useComputed$, useSignal, useStore, useTask$, useVisibleTask$, $, JSXNode, Slot } from '@builder.io/qwik';
 import type { DocumentHead } from '@builder.io/qwik-city';
 import { trpc } from '../client';
-import DatePicker from '~/frontend/components/date-picker';
-import Checkbox from '~/frontend/components/checkbox';
-import Combobox from '~/frontend/components/combobox';
-import TimePicker, { TimePerDayPicker } from '~/frontend/components/time-picker';
+import DatePicker from '~/static/components/date-picker';
+import Checkbox from '~/static/components/checkbox';
+import Combobox from '~/static/components/combobox';
+import TimePicker, { TimePerDayPicker } from '~/static/components/time-picker';
 import { setHours, setMinutes } from 'date-fns';
 import { cloneDeep, find, groupBy } from 'lodash';
 

@@ -4,7 +4,6 @@
   "engines": {
     "node": ">=15.0.0"
   },
-  "packageManager": "pnpm@7.15.0",
   "private": true,
   "scripts": {
     "vercel-build": "npm run build",
@@ -24,7 +23,6 @@
   "dependencies": {
     "@tanstack/react-query": "^4.29.5",
     "@trpc/client": "10.21.2",
-    "@trpc/express": "10.21.2",
     "@trpc/next": "10.21.2",
     "@trpc/react-query": "10.21.2",
     "@trpc/server": "10.21.2",
