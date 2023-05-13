@@ -1,26 +1,29 @@
-import { component$, useComputed$, useSignal, $, Slot, useTask$, useVisibleTask$ } from '@builder.io/qwik';
+import { component$, useComputed$, useSignal, $, Slot, useTask$, useVisibleTask$, useStore } from '@builder.io/qwik';
 import { DocumentHead, Form, globalAction$, routeAction$, z, zod$ } from '@builder.io/qwik-city';
 import DatePicker from '~/components/date-picker';
 import Checkbox from '~/components/checkbox';
 import Combobox from '~/components/combobox';
 import { TimePerDayPicker } from '~/components/time-picker';
-import { setHours, setMinutes } from 'date-fns';
+import { endOfDay, setHours, setMinutes, startOfDay } from 'date-fns';
 import { nanoid } from 'nanoid';
+
+const appointmentRequestSchema = z.object({
+  creatorId: z.string(),
+  title: z.string(),
+  description: z.optional(z.string()),
+  location: z.optional(z.string()),
+  availableTimes: z.array(z.object({
+    startTime: z.date(),
+    endTime: z.date()
+  }))
+});
+type AppointmentRequest = z.infer<typeof appointmentRequestSchema>;
 
 export const useCreateAppointment = globalAction$(
   async (data, requestEvent) => {
 
   },
-  zod$({
-    creatorId: z.string(),
-    title: z.string(),
-    description: z.optional(z.string()),
-    location: z.optional(z.string()),
-    availableTimes: z.array(z.object({
-      startTime: z.date(),
-      endTime: z.date()
-    }))
-  }));
+  zod$(appointmentRequestSchema));
 
 export const useCreateUser = globalAction$(
   async (data, requestEvent) => {
@@ -55,8 +58,23 @@ export default component$(() => {
   const selectedDates = useSignal(new Array<Date>());
   const userId = useUserId();
 
-  return <Form action={createAppointment}>
-    <input type="hidden" name="creatorId" value={userId.value} />
+  const store = useStore<AppointmentRequest>({
+    availableTimes: [],
+    creatorId: userId.value ?? "",
+    title: "",
+    description: "",
+    location: ""
+  });
+
+  function onSelectedDatesChanged(dates: Date[]): void {
+    selectedDates.value = dates;
+    store.availableTimes = dates.map(date => ({
+      startTime: startOfDay(date),
+      endTime: endOfDay(date)
+    }));
+  }
+
+  return <>
     <Section
       title="What"
       description="Describe what your event is about."
@@ -65,10 +83,10 @@ export default component$(() => {
         <label for="title" class="block text-sm font-medium leading-6 text-gray-900">Title</label>
         <div class="mt-2">
           <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-            <input 
-              type="text" 
+            <input
+              type="text"
               name="title"
-              class="block flex-1 border-0 bg-transparent text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6" 
+              class="block flex-1 border-0 bg-transparent text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
               placeholder="John's birthday party" />
           </div>
         </div>
@@ -77,12 +95,12 @@ export default component$(() => {
       <div class="col-span-full">
         <label for="description" class="block text-sm font-medium leading-6 text-gray-900">Description</label>
         <div class="mt-2">
-          <textarea 
-            id="description" 
-            name="description" 
-            rows={3} 
-            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" 
-            placeholder="Looking forward to seeing you at my birthday party! Remember the presents." 
+          <textarea
+            id="description"
+            name="description"
+            rows={3}
+            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            placeholder="Looking forward to seeing you at my birthday party! Remember the presents."
           />
         </div>
       </div>
@@ -93,9 +111,15 @@ export default component$(() => {
       description="Describe where to meet."
     >
       <div class="col-span-full">
-        <label for="about" class="block text-sm font-medium leading-6 text-gray-900">Location</label>
+        <label for="location" class="block text-sm font-medium leading-6 text-gray-900">Location</label>
         <div class="mt-2">
-          <textarea id="about" name="about" rows={2} class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" placeholder="Central Park"></textarea>
+          <textarea
+            id="location"
+            name="location"
+            rows={2}
+            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            placeholder="Central Park"
+          />
         </div>
       </div>
     </Section>
@@ -108,7 +132,7 @@ export default component$(() => {
 
       <DateSection
         selectedDates={selectedDates.value}
-        onChange$={dates => selectedDates.value = dates}
+        onChange$={dates => onSelectedDatesChanged(dates)}
       />
 
       <TimeSection
@@ -118,13 +142,16 @@ export default component$(() => {
 
     <Section>
       <button
+        onClick$={async () => {
+          const result = await createAppointment.submit(store);
+        }}
         type="submit"
         class="place-self-center w-64 col-span-full rounded-full bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
       >
         Save
       </button>
     </Section>
-  </Form>
+  </>
 });
 
 const Section = component$((props: {
