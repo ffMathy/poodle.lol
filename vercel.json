@@ -1,6 +1,7 @@
 {
   "version": 2,
   "buildCommand": "npm run build",
+  "outputDirectory": "output",
   "builds": [
     {
       "src": "output/backend/index.mjs",
@@ -14,7 +15,7 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "output/backend/index.mjs"
+      "dest": "output/api/index.mjs"
     },
     {
       "src": "/(.*)",
