@@ -12,7 +12,7 @@ export default defineConfig(() => {
         }
       },
       sourcemap: true,
-      outDir: './.vercel/output/api',
+      outDir: './output/api',
     },
     ssr: {
       external: ["express"]

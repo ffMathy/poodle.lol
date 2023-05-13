@@ -2,6 +2,7 @@
   "version": 2,
   "buildCommand": "npm run build",
   "outputDirectory": ".vercel/output",
+  "installCommand": "npm i",
   "developmentCommand": "vite -c vite.config.frontend.ts --port $PORT",
   "builds": [
     {
@@ -16,11 +17,11 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "output/api/index.mjs"
+      "dest": ".vercel/output/functions/output/api/index.mjs.func/output/api/index.mjs"
     },
     {
       "src": "/(.*)",
-      "dest": "output/static/entry.vercel-edge.js"
+      "dest": ".vercel/output/static/output/static/entry.vercel-edge.mjs"
     }
   ]
 }

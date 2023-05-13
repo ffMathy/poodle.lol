@@ -12,7 +12,7 @@ export default defineConfig(() => {
         input: ['src/static/entry.vercel-edge.tsx', '@qwik-city-plan'],
       },
       sourcemap: true,
-      outDir: './.vercel/output/static',
+      outDir: './output/static',
     },
     ssr: {
       external: ["express"]
