@@ -4,7 +4,7 @@
   "outputDirectory": "output",
   "builds": [
     {
-      "src": "output/backend/index.mjs",
+      "src": "output/api/index.mjs",
       "use": "@vercel/node"
     }, 
     {
