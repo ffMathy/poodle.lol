@@ -29,7 +29,8 @@ export default defineConfig(() => {
         }
       }),
       vercelEdgeAdapter({
-        staticPaths: ["src/frontend/public"]
+        staticPaths: ["src/frontend/public"],
+        outputConfig: false
       }),
       tsconfigPaths()
     ],
