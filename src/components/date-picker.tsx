@@ -107,6 +107,7 @@ export default component$((props: {
           ];
 
           return <button 
+            key={`date-picker-day-${index}`}
             type="button" 
             class={buttonClasses.filter(x => x).join(' ')}
             onClick$={() => {

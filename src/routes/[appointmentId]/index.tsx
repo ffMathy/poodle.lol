@@ -131,7 +131,9 @@ const AvailableTimesTable = component$((props: {
 
         return <>
             {times.map(time =>
-                <th class="text-xs text-center p-0 pt-0 font-normal">
+                <th key={"available-time-header-" + time.id}
+                    class="text-xs text-center p-0 pt-0 font-normal"
+                >
                     {format(time.startTime, "p")}<br />
                     {format(time.endTime, "p")}
                 </th>)}
@@ -150,7 +152,10 @@ const AvailableTimesTable = component$((props: {
                 const colorClass = isParticipating ?
                     "bg-green-100" :
                     "bg-red-100"
-                return <td class="p-3">
+                return <td 
+                    key={"attendee-row-" + time.id}
+                    class="p-3"
+                >
                     <div class="flex place-content-center">
                         <div class={`${colorClass} w-12 h-12`}></div>
                     </div>

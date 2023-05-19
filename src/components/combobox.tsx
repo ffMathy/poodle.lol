@@ -2,6 +2,7 @@ import { JSXNode, component$, useSignal, useTask$ } from "@builder.io/qwik";
 import { defer } from "lodash";
 
 export default component$(<T extends unknown>(props: {
+    key?: string,
     placeholder?: string,
     class?: string,
     values: T[],
@@ -41,11 +42,11 @@ export default component$(<T extends unknown>(props: {
         </button>
 
         <ul class={`absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm ${ulClass}`} id="options" role="listbox">
-            {props.values.map(value =>
+            {props.values.map((value, index) =>
                 <ComboboxItem<T>
                     value={value as any}
                     isSelected={props.selectedValue === value}
-                    key={props.onRenderText$(value)}
+                    key={`combobox-item-${props.key}-${index}-${props.onRenderText$(value)}`}
                     onRenderText$={props.onRenderText$}
                     onSelected$={async () => {
                         props.onChange$(value);

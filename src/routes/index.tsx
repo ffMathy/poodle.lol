@@ -279,6 +279,7 @@ const TimeSection = component$((props: {
     <div class="mt-5">
       {props.dates.map(date =>
         <TimePerDayPicker
+          key={`time-per-day-picker-${date.toISOString()}`}
           day={date}
           onChange$={times => { }}
         />)}
