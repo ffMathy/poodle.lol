@@ -1,4 +1,4 @@
-import { JSXNode, component$, useSignal } from "@builder.io/qwik";
+import { JSXNode, component$, useSignal, useTask$ } from "@builder.io/qwik";
 import { defer } from "lodash";
 
 export default component$(<T extends unknown>(props: {
@@ -17,6 +17,10 @@ export default component$(<T extends unknown>(props: {
     const ariaExpanded = isSelecting.value ?
         "true" :
         "false";
+
+    useTask$(async () => {
+        valueString.value = await props.onRenderText$(props.selectedValue || props.values[0]);
+    })
 
     return <div class={`relative mt-0 ${props.class ?? ""}`}>
         <input

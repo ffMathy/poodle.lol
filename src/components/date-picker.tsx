@@ -1,5 +1,5 @@
 import { component$, useComputed$, useSignal } from "@builder.io/qwik";
-import { addDays, addMonths, format, getMonth, isMonday, isSunday, isToday as isTodayFn, lastDayOfMonth, nextSunday, previousMonday } from "date-fns";
+import { addDays, addMonths, format, getMonth, isMonday, isSunday, isToday as isTodayFn, lastDayOfMonth, nextSunday, previousMonday, startOfMonth } from "date-fns";
 
 export default component$((props: {
   selectedDates: Date[],
@@ -8,7 +8,7 @@ export default component$((props: {
   const startOfCurrentMonthDate = useSignal(new Date());
 
   const startDate = useComputed$(() => {
-    const firstDay = startOfCurrentMonthDate.value;
+    const firstDay = startOfMonth(startOfCurrentMonthDate.value);
     return isMonday(firstDay) ? firstDay : previousMonday(firstDay);
   });
   const endDate = useComputed$(() => {
@@ -24,8 +24,6 @@ export default component$((props: {
       dates.push(currentDate);
       currentDate = addDays(currentDate, 1);
     }
-
-    dates.push(currentDate);
 
     return dates;
   });

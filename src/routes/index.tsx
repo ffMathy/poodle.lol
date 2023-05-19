@@ -29,38 +29,17 @@ export const useCreateUser = globalAction$(
   async (data, requestEvent) => {
     return { id: nanoid() };
   },
-  zod$(z.void()));
-
-const useUserId = () => {
-  const createUser = useCreateUser();
-
-  const userId = useSignal<string>();
-
-  useVisibleTask$(async () => {
-    const currentUserId = localStorage.getItem("user-id");
-    if (currentUserId) {
-      userId.value = currentUserId;
-      return;
-    }
-
-    const createUserResponse = await createUser.submit();
-    const createdUserId = createUserResponse.value.id!;
-    userId.value = createdUserId;
-    localStorage.setItem("user-id", createdUserId)
-  });
-
-  return userId;
-}
+  zod$(z.object({})));
 
 export default component$(() => {
   const createAppointment = useCreateAppointment();
+  const createUser = useCreateUser();
 
   const selectedDates = useSignal(new Array<Date>());
-  const userId = useUserId();
 
   const store = useStore<AppointmentRequest>({
     availableTimes: [],
-    creatorId: userId.value ?? "",
+    creatorId: "",
     title: "",
     description: "",
     location: ""
@@ -143,6 +122,18 @@ export default component$(() => {
     <Section>
       <button
         onClick$={async () => {
+          const currentUserId = localStorage.getItem("user-id");
+          if (currentUserId) {
+            store.creatorId = currentUserId;
+          } else {
+            const createUserResponse = await createUser.submit({});
+            if(createUserResponse.value.failed)
+              throw new Error("Could not create user.");
+
+            localStorage.setItem("user-id", createUserResponse.value.id!)
+            store.creatorId = createUserResponse.value.id!;
+          }
+
           const result = await createAppointment.submit(store);
         }}
         type="submit"
@@ -207,6 +198,8 @@ const DurationSection = component$(() => {
       }
     }
 
+    result.splice(0, 1);
+
     return result;
   });
 
@@ -218,8 +211,9 @@ const DurationSection = component$(() => {
       <Combobox<Duration>
         values={durations.value}
         selectedValue={selectedDuration.value}
-        placeholder='0h 0m'
-        onChange$={value => selectedDuration.value = value}
+        onChange$={value => {
+          selectedDuration.value = value;
+        }}
         onRenderText$={duration => {
           if (!duration.hours)
             return `${duration.minutes}m`;
@@ -277,7 +271,9 @@ const TimeSection = component$((props: {
       <Checkbox
         label='Same time for all dates'
         isChecked={useSameTimesForAllDates.value}
-        onChange$={isChecked => useSameTimesForAllDates.value = isChecked}
+        onChange$={isChecked => {
+          useSameTimesForAllDates.value = isChecked;
+        }}
       />
     </div>
     <div class="mt-5">
