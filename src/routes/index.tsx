@@ -1,39 +1,18 @@
 import { component$, useComputed$, useSignal, $, Slot, useTask$, useVisibleTask$, useStore } from '@builder.io/qwik';
-import { DocumentHead, Form, globalAction$, routeAction$, z, zod$ } from '@builder.io/qwik-city';
+import { DocumentHead, Form, globalAction$, routeAction$, useNavigate, z, zod$ } from '@builder.io/qwik-city';
 import DatePicker from '~/components/date-picker';
 import Checkbox from '~/components/checkbox';
 import Combobox from '~/components/combobox';
 import { TimePerDayPicker } from '~/components/time-picker';
 import { endOfDay, setHours, setMinutes, startOfDay } from 'date-fns';
 import { nanoid } from 'nanoid';
-
-const appointmentRequestSchema = z.object({
-  creatorId: z.string(),
-  title: z.string(),
-  description: z.optional(z.string()),
-  location: z.optional(z.string()),
-  availableTimes: z.array(z.object({
-    startTime: z.date(),
-    endTime: z.date()
-  }))
-});
-type AppointmentRequest = z.infer<typeof appointmentRequestSchema>;
-
-export const useCreateAppointment = globalAction$(
-  async (data, requestEvent) => {
-
-  },
-  zod$(appointmentRequestSchema));
-
-export const useCreateUser = globalAction$(
-  async (data, requestEvent) => {
-    return { id: nanoid() };
-  },
-  zod$(z.object({})));
+import { kv } from "@vercel/kv";
+import { getAppointmentKey, getUserKey } from '~/data/keys';
 
 export default component$(() => {
   const createAppointment = useCreateAppointment();
   const createUser = useCreateUser();
+  const navigate = useNavigate();
 
   const selectedDates = useSignal(new Array<Date>());
 
@@ -135,6 +114,10 @@ export default component$(() => {
           }
 
           const result = await createAppointment.submit(store);
+          if(result.value.failed)
+            throw new Error("Could not create appointment.");
+
+          navigate(`/${result.value.id!}`)
         }}
         type="submit"
         class="place-self-center w-64 col-span-full rounded-full bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
@@ -296,3 +279,47 @@ export const head: DocumentHead = {
     },
   ],
 };
+
+const appointmentRequestSchema = z.object({
+  creatorId: z.string(),
+  title: z.string(),
+  description: z.optional(z.string()),
+  location: z.optional(z.string()),
+  availableTimes: z.array(z.object({
+    startTime: z.date(),
+    endTime: z.date()
+  }))
+});
+type AppointmentRequest = z.infer<typeof appointmentRequestSchema>;
+
+export const useCreateAppointment = globalAction$(
+  async (data, requestEvent) => {
+    const appointmentId = nanoid();
+
+    const creator = await kv.get(getUserKey(data.creatorId));
+    if(!creator) {
+      requestEvent.status(400);
+      return {};
+    }
+
+    await kv.set(getAppointmentKey(appointmentId), {
+      creatorId: data.creatorId,
+      title: data.title,
+      description: data.description,
+      location: data.location,
+      availableTimes: data.availableTimes
+    });
+
+    return { id: appointmentId };
+  },
+  zod$(appointmentRequestSchema));
+
+export const useCreateUser = globalAction$(
+  async (data, requestEvent) => {
+    const userId = nanoid();
+    await kv.set(getUserKey(userId), {});
+    
+    return { id: userId };
+  },
+  zod$(z.object({})));
+

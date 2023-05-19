@@ -3,6 +3,8 @@ import { groupBy, keys } from "lodash";
 import { addDays, addHours, format } from 'date-fns';
 import { routeLoader$ } from '@builder.io/qwik-city';
 import { nanoid } from 'nanoid';
+import { kv } from "@vercel/kv";
+import { getAppointmentKey } from '~/data/keys';
 
 type Attendee = {
     userName: string,
@@ -25,47 +27,13 @@ type Appointment = {
 }
 
 export const useAppointment = routeLoader$(async (requestEvent) => {
-    const availableTimes = [
-        {
-            id: nanoid(),
-            startTime: addDays(new Date(), 2),
-            endTime: addHours(addDays(new Date(), 2), 2)
-        },
-        {
-            id: nanoid(),
-            startTime: addHours(addDays(new Date(), 2), 2),
-            endTime: addHours(addDays(new Date(), 2), 4)
-        },
-        {
-            id: nanoid(),
-            startTime: addDays(new Date(), 4),
-            endTime: addHours(addDays(new Date(), 4), 2)
-        }
-    ];
-    return {
-        creatorName: "John Doe",
-        title: "John's birthday party",
-        description: "It's gonna be awesome.",
-        location: "Central Park",
-        availableTimes: availableTimes,
-        attendees: [
-            {
-                userName: "Julia",
-                subscribedTimeslotIds: [availableTimes[0].id]
-            },
-            {
-                userName: "Robert",
-                subscribedTimeslotIds: [availableTimes[2].id]
-            },
-            {
-                userName: "Marc",
-                subscribedTimeslotIds: [
-                    availableTimes[0].id,
-                    availableTimes[1].id
-                ]
-            }
-        ]
-    } as Appointment;
+    const appointment = await kv.get(getAppointmentKey(requestEvent.params.appointmentId));
+    // if(!appointment) {
+    //     requestEvent.status(404);
+    //     return {};
+    // }
+
+    return appointment as Appointment;
 });
 
 export default component$(() => {
