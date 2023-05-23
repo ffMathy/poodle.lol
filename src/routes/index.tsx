@@ -59,7 +59,7 @@ export default component$(() => {
     if(result.value.failed)
       throw new Error("Could not create appointment.");
 
-    // navigate(`/${result.value.id!}`)
+    navigate(`/${result.value.id!}`)
   });
 
   return <>
@@ -323,7 +323,7 @@ export const useCreateUser = globalAction$(
     const userId = nanoid();
 
     const kv = createQwikCompatibleKvClient();
-    await kv.set(getUserKey(userId), {});
+    await kv.set(getUserKey(userId), {}, {});
     
     return { id: userId };
   },
