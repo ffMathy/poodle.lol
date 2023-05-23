@@ -1,14 +1,15 @@
 import { component$, useComputed$, useSignal, $, Slot, useTask$, useVisibleTask$, useStore } from '@builder.io/qwik';
-import { DocumentHead, Form, globalAction$, routeAction$, useNavigate, z, zod$ } from '@builder.io/qwik-city';
+import { DocumentHead, Form, globalAction$, routeAction$, routeLoader$, useNavigate, z, zod$ } from '@builder.io/qwik-city';
 import DatePicker from '~/components/date-picker';
 import Checkbox from '~/components/checkbox';
 import Combobox from '~/components/combobox';
 import { TimePerDayPicker } from '~/components/time-picker';
 import { endOfDay, setHours, setMinutes, startOfDay } from 'date-fns';
 import { nanoid } from 'nanoid';
-import { getAppointmentKey, getUserKey } from '~/data/keys';
-import { createQwikCompatibleKvClient } from './kv';
+import { getAppointmentKey, getUserKey } from '~/utils/keys';
+import { createQwikCompatibleKvClient } from '../utils/kv';
 import { Appointment } from './[appointmentId]';
+import { InitialValues, SubmitHandler, formAction$, useForm, zodForm$ } from '@modular-forms/qwik';
 
 export const head: DocumentHead = {
   title: 'Poodle',
@@ -20,6 +21,14 @@ export const head: DocumentHead = {
   ],
 };
 
+const defaultAppointmentRequest: AppointmentRequest = {
+  availableTimes: [] as any,
+  creatorId: "",
+  title: "",
+  description: "",
+  location: ""
+};
+
 export default component$(() => {
   const createAppointment = useCreateAppointment();
   const createUser = useCreateUser();
@@ -27,29 +36,26 @@ export default component$(() => {
 
   const selectedDates = useSignal(new Array<Date>());
 
-  const store = useStore<AppointmentRequest>({
-    availableTimes: [],
-    creatorId: "",
-    title: "",
-    description: "",
-    location: ""
+  const [_, { Form, Field }] = useForm<AppointmentRequest>({
+    loader: useFormLoader(),
+    validate: zodForm$(appointmentRequestSchema)
   });
 
   const onSelectedDatesChanged = $((dates: Date[]) => {
     selectedDates.value = dates;
-    store.availableTimes = dates.map(date => ({
-      startTime: startOfDay(date),
-      endTime: endOfDay(date)
-    }));
+    // store.availableTimes = dates.map(date => ({
+    //   startTime: startOfDay(date),
+    //   endTime: endOfDay(date)
+    // }));
   });
 
-  const onSubmitClicked = $(async () => {
+  const onFormSubmitted: SubmitHandler<AppointmentRequest> = $(async (store) => {
     const currentUserId = localStorage.getItem("user-id");
     if (currentUserId) {
       store.creatorId = currentUserId;
     } else {
       const createUserResponse = await createUser.submit({});
-      if(createUserResponse.value.failed)
+      if (createUserResponse.value.failed)
         throw new Error("Could not create user.");
 
       localStorage.setItem("user-id", createUserResponse.value.id!)
@@ -57,41 +63,50 @@ export default component$(() => {
     }
 
     const result = await createAppointment.submit(store);
-    if(result.value.failed)
+    if (result.value.failed)
       throw new Error("Could not create appointment.");
 
     navigate(`/${result.value.id!}`)
   });
 
-  return <>
+  return <Form onSubmit$={onFormSubmitted}>
     <Section
       title="What"
       description="Describe what your event is about."
     >
       <div class="sm:col-span-4">
-        <label for="title" class="block text-sm font-medium leading-6 text-gray-900">Title</label>
-        <div class="mt-2">
-          <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-            <input
-              type="text"
-              name="title"
-              class="block flex-1 border-0 bg-transparent text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-              placeholder="John's birthday party" />
-          </div>
-        </div>
+        <Field name="title">
+          {(field, props) => <>
+            <label for={props.name} class="block text-sm font-medium leading-6 text-gray-900">Title</label>
+            <div class="mt-2">
+              <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                <input
+                  type="text"
+                  class="block flex-1 border-0 bg-transparent text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                  placeholder="John's birthday party"
+                  {...props} />
+              </div>
+            </div>
+            {field.error && <p class="mt-2 text-sm text-red-600">{field.error}</p>}
+          </>}
+        </Field>
       </div>
 
       <div class="col-span-full">
-        <label for="description" class="block text-sm font-medium leading-6 text-gray-900">Description</label>
-        <div class="mt-2">
-          <textarea
-            id="description"
-            name="description"
-            rows={3}
-            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            placeholder="Looking forward to seeing you at my birthday party! Remember the presents."
-          />
-        </div>
+        <Field name="description">
+          {(field, props) => <>
+            <label for={props.name} class="block text-sm font-medium leading-6 text-gray-900">Description</label>
+            <div class="mt-2">
+              <textarea
+                rows={4}
+                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                placeholder="Looking forward to seeing you at my birthday party! Remember the presents."
+                {...props}
+              />
+            </div>
+            {field.error && <p class="mt-2 text-sm text-red-600">{field.error}</p>}
+          </>}
+        </Field>
       </div>
     </Section>
 
@@ -100,16 +115,20 @@ export default component$(() => {
       description="Describe where to meet."
     >
       <div class="col-span-full">
-        <label for="location" class="block text-sm font-medium leading-6 text-gray-900">Location</label>
-        <div class="mt-2">
-          <textarea
-            id="location"
-            name="location"
-            rows={2}
-            class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            placeholder="Central Park"
-          />
-        </div>
+        <Field name="location">
+          {(field, props) => <>
+            <label for={props.name} class="block text-sm font-medium leading-6 text-gray-900">Location</label>
+            <div class="mt-2">
+              <textarea
+                rows={2}
+                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                placeholder="Central Park"
+                {...props}
+              />
+            </div>
+            {field.error && <p class="mt-2 text-sm text-red-600">{field.error}</p>}
+          </>}
+        </Field>
       </div>
     </Section>
 
@@ -131,14 +150,13 @@ export default component$(() => {
 
     <Section>
       <button
-        onClick$={onSubmitClicked}
         type="submit"
         class="place-self-center w-64 col-span-full rounded-full bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
       >
         Save
       </button>
     </Section>
-  </>
+  </Form>
 });
 
 const Section = component$((props: {
@@ -285,15 +303,21 @@ const TimeSection = component$((props: {
 
 const appointmentRequestSchema = z.object({
   creatorId: z.string(),
-  title: z.string(),
-  description: z.optional(z.string()),
-  location: z.optional(z.string()),
-  availableTimes: z.array(z.object({
-    startTime: z.date(),
-    endTime: z.date()
-  }))
+  title: z
+    .string()
+    .nonempty("You must specify a title."),
+  description: z.string().optional(),
+  location: z.string().optional(),
+  availableTimes: z
+    .array(z.object({
+      startTime: z.date(),
+      endTime: z.date()
+    }))
+    .nonempty("You must specify at least one date and time.")
 });
 type AppointmentRequest = z.infer<typeof appointmentRequestSchema>;
+
+export const useFormLoader = routeLoader$<InitialValues<AppointmentRequest>>(() => defaultAppointmentRequest as InitialValues<AppointmentRequest>);
 
 export const useCreateAppointment = globalAction$(
   async (data, requestEvent) => {
@@ -302,7 +326,7 @@ export const useCreateAppointment = globalAction$(
     const kv = createQwikCompatibleKvClient();
 
     const creator = await kv.get(getUserKey(data.creatorId));
-    if(!creator) {
+    if (!creator) {
       requestEvent.status(400);
       return {};
     }
@@ -329,7 +353,7 @@ export const useCreateUser = globalAction$(
 
     const kv = createQwikCompatibleKvClient();
     await kv.set(getUserKey(userId), {}, {});
-    
+
     return { id: userId };
   },
   zod$(z.object({})));

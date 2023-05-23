@@ -3,8 +3,8 @@ import { groupBy, keys } from "lodash";
 import { addDays, addHours, format } from 'date-fns';
 import { routeLoader$ } from '@builder.io/qwik-city';
 import { nanoid } from 'nanoid';
-import { getAppointmentKey } from '~/data/keys';
-import { createQwikCompatibleKvClient } from '../kv';
+import { getAppointmentKey } from '~/utils/keys';
+import { createQwikCompatibleKvClient } from '../../utils/kv';
 
 type Attendee = {
     userName: string,
