@@ -32,6 +32,26 @@ export default component$(() => {
     }));
   });
 
+  const onSubmitClicked = $(async () => {
+    const currentUserId = localStorage.getItem("user-id");
+    if (currentUserId) {
+      store.creatorId = currentUserId;
+    } else {
+      const createUserResponse = await createUser.submit({});
+      if(createUserResponse.value.failed)
+        throw new Error("Could not create user.");
+
+      localStorage.setItem("user-id", createUserResponse.value.id!)
+      store.creatorId = createUserResponse.value.id!;
+    }
+
+    const result = await createAppointment.submit(store);
+    if(result.value.failed)
+      throw new Error("Could not create appointment.");
+
+    // navigate(`/${result.value.id!}`)
+  });
+
   return <>
     <Section
       title="What"
@@ -100,25 +120,7 @@ export default component$(() => {
 
     <Section>
       <button
-        onClick$={async () => {
-          const currentUserId = localStorage.getItem("user-id");
-          if (currentUserId) {
-            store.creatorId = currentUserId;
-          } else {
-            const createUserResponse = await createUser.submit({});
-            if(createUserResponse.value.failed)
-              throw new Error("Could not create user.");
-
-            localStorage.setItem("user-id", createUserResponse.value.id!)
-            store.creatorId = createUserResponse.value.id!;
-          }
-
-          const result = await createAppointment.submit(store);
-          if(result.value.failed)
-            throw new Error("Could not create appointment.");
-
-          navigate(`/${result.value.id!}`)
-        }}
+        onClick$={onSubmitClicked}
         type="submit"
         class="place-self-center w-64 col-span-full rounded-full bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
       >
