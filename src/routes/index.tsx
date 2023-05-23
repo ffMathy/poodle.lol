@@ -8,6 +8,7 @@ import { endOfDay, setHours, setMinutes, startOfDay } from 'date-fns';
 import { nanoid } from 'nanoid';
 import { getAppointmentKey, getUserKey } from '~/data/keys';
 import { createQwikCompatibleKvClient } from './kv';
+import { Appointment } from './[appointmentId]';
 
 export const head: DocumentHead = {
   title: 'Poodle',
@@ -311,8 +312,12 @@ export const useCreateAppointment = globalAction$(
       title: data.title,
       description: data.description,
       location: data.location,
-      availableTimes: data.availableTimes
-    });
+      availableTimes: data.availableTimes.map(x => ({
+        ...x,
+        id: nanoid()
+      })),
+      attendees: []
+    } as Appointment);
 
     return { id: appointmentId };
   },

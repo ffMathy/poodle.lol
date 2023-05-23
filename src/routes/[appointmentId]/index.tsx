@@ -17,8 +17,7 @@ type Timeslot = {
     endTime: Date
 }
 
-type Appointment = {
-    creatorName: string,
+export type Appointment = {
     title: string,
     description?: string,
     location?: string,
@@ -49,9 +48,6 @@ export default component$(() => {
                     <h2 class="text-xl font-semibold leading-7 text-gray-900">
                         {appointment.title}
                     </h2>
-                    <span class="text-base text-gray-400">
-                        By {appointment.creatorName}
-                    </span>
                     <p class="mt-1 text-sm leading-8 text-gray-600">
                         {appointment.description}
                     </p>
