@@ -9,6 +9,16 @@ import { nanoid } from 'nanoid';
 import { kv } from "@vercel/kv";
 import { getAppointmentKey, getUserKey } from '~/data/keys';
 
+export const head: DocumentHead = {
+  title: 'Poodle',
+  meta: [
+    {
+      name: 'description',
+      content: 'Find a date for your next event without the hassle.',
+    },
+  ],
+};
+
 export default component$(() => {
   const createAppointment = useCreateAppointment();
   const createUser = useCreateUser();
@@ -271,16 +281,6 @@ const TimeSection = component$((props: {
     </div>
   </div>
 })
-
-export const head: DocumentHead = {
-  title: 'Welcome to Qwik',
-  meta: [
-    {
-      name: 'description',
-      content: 'Qwik site description',
-    },
-  ],
-};
 
 const appointmentRequestSchema = z.object({
   creatorId: z.string(),
