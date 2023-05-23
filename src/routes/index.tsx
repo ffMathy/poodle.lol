@@ -298,8 +298,10 @@ export const useCreateAppointment = globalAction$(
   async (data, requestEvent) => {
     const appointmentId = nanoid();
 
-    console.log("lol!");
-    console.log("url?", process.env["KV_REST_API_URL"]);
+    console.error("lol!");
+    console.error("url?", process.env["KV_REST_API_URL"]);
+
+    console.error("keys", await kv.keys("*"));
 
     const creator = await kv.get(getUserKey(data.creatorId));
     if(!creator) {
