@@ -43,6 +43,8 @@
     "@types/node": "^18.16.2",
     "@types/uuid": "^9.0.1",
     "autoprefixer": "^10.4.13",
+    "dotenv": "^16.0.3",
+    "dotenv-expand": "^10.0.0",
     "move-file-cli": "^3.0.0",
     "nodemon": "^2.0.22",
     "postcss": "^8.4.16",

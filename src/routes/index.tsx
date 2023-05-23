@@ -23,6 +23,7 @@ export default component$(() => {
   const createAppointment = useCreateAppointment();
   const createUser = useCreateUser();
   const navigate = useNavigate();
+  const debug = useDebug();
 
   const selectedDates = useSignal(new Array<Date>());
 
@@ -63,6 +64,11 @@ export default component$(() => {
   });
 
   return <>
+    <button onClick$={async () => {
+      const result = await debug.submit({});
+      console.log(JSON.stringify(result.value));
+      alert(JSON.stringify(result.value));
+    }}>Click me</button>
     <Section
       title="What"
       description="Describe what your event is about."
@@ -320,6 +326,12 @@ export const useCreateAppointment = globalAction$(
     return { id: appointmentId };
   },
   zod$(appointmentRequestSchema));
+
+export const useDebug = globalAction$(
+  async (data, requestEvent) => {
+    return { url: process.env["KV_REST_API_URL"] };
+  },
+  zod$(z.object({})));
 
 export const useCreateUser = globalAction$(
   async (data, requestEvent) => {
