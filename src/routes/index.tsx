@@ -329,7 +329,10 @@ export const useCreateAppointment = globalAction$(
 
 export const useDebug = globalAction$(
   async (data, requestEvent) => {
-    return { url: process.env["KV_REST_API_URL"] };
+    return { 
+      url: process.env.KV_REST_API_URL,
+      env: process.env.VERCEL_ENV
+    };
   },
   zod$(z.object({})));
 
