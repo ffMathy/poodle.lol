@@ -21,6 +21,7 @@
     "qwik": "qwik"
   },
   "dependencies": {
+    "@vercel/analytics": "^1.0.1",
     "@vercel/kv": "^0.2.1",
     "cors": "^2.8.5",
     "date-fns": "^2.29.3",
