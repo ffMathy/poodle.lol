@@ -3,8 +3,8 @@ import { groupBy, keys } from "lodash";
 import { addDays, addHours, format } from 'date-fns';
 import { routeLoader$ } from '@builder.io/qwik-city';
 import { nanoid } from 'nanoid';
-import { kv } from "@vercel/kv";
 import { getAppointmentKey } from '~/data/keys';
+import { createQwikCompatibleKvClient } from '../kv';
 
 type Attendee = {
     userName: string,
@@ -26,18 +26,21 @@ type Appointment = {
     attendees: Attendee[]
 }
 
-export const useAppointment = routeLoader$(async (requestEvent) => {
+export const useAppointment = routeLoader$(async (requestEvent): Promise<Appointment|undefined> => {
+    const kv = createQwikCompatibleKvClient();
     const appointment = await kv.get(getAppointmentKey(requestEvent.params.appointmentId));
-    // if(!appointment) {
-    //     requestEvent.status(404);
-    //     return {};
-    // }
+    if(!appointment) {
+        requestEvent.status(404);
+        return;
+    }
 
     return appointment as Appointment;
 });
 
 export default component$(() => {
     const appointment = useAppointment().value;
+    if(!appointment)
+        return null;
 
     return (
         <form>

@@ -6,8 +6,8 @@ import Combobox from '~/components/combobox';
 import { TimePerDayPicker } from '~/components/time-picker';
 import { endOfDay, setHours, setMinutes, startOfDay } from 'date-fns';
 import { nanoid } from 'nanoid';
-import { kv } from "@vercel/kv";
 import { getAppointmentKey, getUserKey } from '~/data/keys';
+import { createQwikCompatibleKvClient } from './kv';
 
 export const head: DocumentHead = {
   title: 'Poodle',
@@ -23,7 +23,6 @@ export default component$(() => {
   const createAppointment = useCreateAppointment();
   const createUser = useCreateUser();
   const navigate = useNavigate();
-  const debug = useDebug();
 
   const selectedDates = useSignal(new Array<Date>());
 
@@ -64,11 +63,6 @@ export default component$(() => {
   });
 
   return <>
-    <button onClick$={async () => {
-      const result = await debug.submit({});
-      console.log(JSON.stringify(result.value));
-      alert(JSON.stringify(result.value));
-    }}>Click me</button>
     <Section
       title="What"
       description="Describe what your event is about."
@@ -304,10 +298,7 @@ export const useCreateAppointment = globalAction$(
   async (data, requestEvent) => {
     const appointmentId = nanoid();
 
-    console.error("lol!");
-    console.error("url?", process.env["KV_REST_API_URL"]);
-
-    console.error("keys", await kv.keys("*"));
+    const kv = createQwikCompatibleKvClient();
 
     const creator = await kv.get(getUserKey(data.creatorId));
     if(!creator) {
@@ -327,19 +318,11 @@ export const useCreateAppointment = globalAction$(
   },
   zod$(appointmentRequestSchema));
 
-export const useDebug = globalAction$(
-  async (data, requestEvent) => {
-    return { 
-      env: process.env.VERCEL_ENV,
-      env2: process.env["VERCEL_ENV"],
-      keys: Object.keys(process.env)
-    };
-  },
-  zod$(z.object({})));
-
 export const useCreateUser = globalAction$(
   async (data, requestEvent) => {
     const userId = nanoid();
+
+    const kv = createQwikCompatibleKvClient();
     await kv.set(getUserKey(userId), {});
     
     return { id: userId };
