@@ -3,7 +3,8 @@ import { addDays, addMonths, format, getMonth, isMonday, isSunday, isToday as is
 
 export default component$((props: {
   selectedDates: Date[],
-  onChange$: (dates: Date[]) => void
+  onAdded: (date: Date) => void,
+  onDeleted: (date: Date) => void
 }) => {
   const startOfCurrentMonthDate = useSignal(new Date());
 
@@ -112,9 +113,9 @@ export default component$((props: {
             class={buttonClasses.filter(x => x).join(' ')}
             onClick$={() => {
               if(!props.selectedDates.includes(date)) {
-                props.onChange$([...props.selectedDates, date]);
+                props.onAdded(date);
               } else {
-                props.onChange$(props.selectedDates.filter(x => x !== date));
+                props.onDeleted(date);
               }
             }}
           >

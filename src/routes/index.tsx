@@ -1,15 +1,13 @@
-import { component$, useComputed$, useSignal, $, Slot, useTask$, useVisibleTask$, useStore } from '@builder.io/qwik';
-import { DocumentHead, Form, globalAction$, routeAction$, routeLoader$, useNavigate, z, zod$ } from '@builder.io/qwik-city';
-import DatePicker from '~/components/date-picker';
-import Checkbox from '~/components/checkbox';
-import Combobox from '~/components/combobox';
-import { TimePerDayPicker } from '~/components/time-picker';
-import { endOfDay, setHours, setMinutes, startOfDay } from 'date-fns';
-import { nanoid } from 'nanoid';
-import { getAppointmentKey, getUserKey } from '~/utils/keys';
-import { createQwikCompatibleKvClient } from '../utils/kv';
-import { Appointment } from './[appointmentId]';
-import { InitialValues, SubmitHandler, formAction$, useForm, zodForm$ } from '@modular-forms/qwik';
+import { component$, useSignal, $ } from '@builder.io/qwik';
+import { DocumentHead, useNavigate } from '@builder.io/qwik-city';
+import { SubmitHandler, getValue, getValues, insert, remove, setValues, useForm, zodForm$ } from '@modular-forms/qwik';
+import { TimeSection } from './time-section';
+import { DurationSection } from './duration-section';
+import { DateSection } from './date-section';
+import { Section } from './section';
+import { AppointmentRequest, appointmentRequestSchema, useCreateAppointment, useCreateUser, useFormLoader } from './backend';
+import { orderBy } from 'lodash';
+import { format } from 'date-fns';
 
 export const head: DocumentHead = {
   title: 'Poodle',
@@ -21,14 +19,6 @@ export const head: DocumentHead = {
   ],
 };
 
-const defaultAppointmentRequest: AppointmentRequest = {
-  availableTimes: [] as any,
-  creatorId: "",
-  title: "",
-  description: "",
-  location: ""
-};
-
 export default component$(() => {
   const createAppointment = useCreateAppointment();
   const createUser = useCreateUser();
@@ -36,17 +26,12 @@ export default component$(() => {
 
   const selectedDates = useSignal(new Array<Date>());
 
-  const [_, { Form, Field }] = useForm<AppointmentRequest>({
+  const [form, { Form, Field, FieldArray }] = useForm({
     loader: useFormLoader(),
     validate: zodForm$(appointmentRequestSchema)
   });
 
   const onSelectedDatesChanged = $((dates: Date[]) => {
-    selectedDates.value = dates;
-    // store.availableTimes = dates.map(date => ({
-    //   startTime: startOfDay(date),
-    //   endTime: endOfDay(date)
-    // }));
   });
 
   const onFormSubmitted: SubmitHandler<AppointmentRequest> = $(async (store) => {
@@ -140,12 +125,42 @@ export default component$(() => {
 
       <DateSection
         selectedDates={selectedDates.value}
-        onChange$={dates => onSelectedDatesChanged(dates)}
+        onAdded={date => {
+          selectedDates.value = orderBy([...selectedDates.value, date], x => x.getTime());
+          insert(form, "startTimesPerDay", {
+            value: {
+              day: date,
+              times: [date]
+            },
+            at: selectedDates.value.indexOf(date)
+          });
+        }}
+        onDeleted={date => remove(
+          form,
+          "startTimesPerDay",
+          { at: selectedDates.value.indexOf(date) })}
       />
 
-      <TimeSection
-        dates={selectedDates.value}
-      />
+      <FieldArray name="startTimesPerDay">
+        {(fieldArray) => <>
+          {fieldArray.items.map((item, index) =>
+            <div key={item}>
+              <label for="about" class="block text-sm font-light leading-6 text-gray-900 mb-2">
+                {format(getValue(form, `${fieldArray.name}.${index}.day`)!, "PPP")}
+              </label>
+              <div class="mb-5">
+                <Field name={`${fieldArray.name}.${index}.`}>
+                  {(field, props) => <>
+                    <TimeSection
+                      dates={selectedDates.value}
+                    />
+                  </>}
+                </Field>
+              </div>
+            </div>
+          )}
+        </>}
+      </FieldArray>
     </Section>
 
     <Section>
@@ -156,205 +171,6 @@ export default component$(() => {
         Save
       </button>
     </Section>
-  </Form>
+  </Form >
 });
-
-const Section = component$((props: {
-  title?: string,
-  description?: string
-}) => {
-  const classNameAdd = props.title || props.description ?
-    "bg-white shadow-sm ring-1 ring-gray-900/5" :
-    "";
-  return <div class="space-y-10 divide-y divide-gray-900/10 mb-10">
-    <div class="grid grid-cols-1 gap-x-8 gap-y-8 md:grid-cols-3">
-      <div class="px-4 sm:px-0">
-        {props.title &&
-          <h2 class="text-base font-semibold leading-7 text-gray-900">{props.title}</h2>}
-
-        {props.description &&
-          <p class="mt-1 text-sm leading-6 text-gray-600">{props.description}</p>}
-      </div>
-      <div class={`${classNameAdd} sm:rounded-xl md:col-span-2`}>
-        <div class="px-4 py-6 sm:p-8">
-          <div class="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <Slot />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-})
-
-const DateSection = component$((props: {
-  selectedDates: Date[],
-  onChange$: (dates: Date[]) => void
-}) => {
-  return <div class="col-span-full">
-    <label for="about" class="block text-sm font-medium leading-6 text-gray-900">Dates</label>
-    <div class="mt-5">
-      <DatePicker
-        selectedDates={props.selectedDates}
-        onChange$={props.onChange$}
-      />
-    </div>
-  </div>
-})
-
-const DurationSection = component$(() => {
-  type Duration = { hours: number, minutes: number };
-
-  const durations = useComputed$(() => {
-    const result = new Array<Duration>();
-    for (let h = 0; h < 24; h++) {
-      for (let m = 0; m < 60; m += 15) {
-        result.push({ hours: h, minutes: m })
-      }
-    }
-
-    result.splice(0, 1);
-
-    return result;
-  });
-
-  const selectedDuration = useSignal<Duration>(() => durations.value[0]);
-
-  return <div class="sm:col-span-4">
-    <label for="Duration" class="block text-sm font-medium leading-6 text-gray-900">Duration</label>
-    <div class="mt-2">
-      <Combobox<Duration>
-        values={durations.value}
-        selectedValue={selectedDuration.value}
-        onChange$={value => {
-          selectedDuration.value = value;
-        }}
-        onRenderText$={duration => {
-          if (!duration.hours)
-            return `${duration.minutes}m`;
-
-          return `${duration.hours}h ${duration.minutes}m`;
-        }}
-      />
-    </div>
-  </div>
-});
-
-const TimeSection = component$((props: {
-  dates: Date[]
-}) => {
-  type TimesForDate = {
-    date: Date,
-    times: Date[]
-  }
-
-  const useSameTimesForAllDates = useSignal(false);
-
-  const resetTime$ = $((time: Date) =>
-    setMinutes(
-      setHours(
-        time,
-        0),
-      0));
-
-  const copyTimeTo$ = $((time: Date, destination: Date) =>
-    setMinutes(
-      setHours(
-        destination,
-        time.getHours()),
-      time.getMinutes()));
-
-  const timesForDates = useSignal<TimesForDate[]>(props.dates.map(date => ({
-    date,
-    times: [
-      date
-    ]
-  })));
-
-  if (props.dates.length === 0) {
-    return <div class="col-span-full">
-      <label for="about" class="block text-sm font-medium leading-6 text-gray-900">Times</label>
-      <p class="mt-5 text-sm">
-        Select one or more dates first.
-      </p>
-    </div>;
-  }
-
-  return <div class="col-span-full">
-    <label for="about" class="block text-sm font-medium leading-6 text-gray-900">Times</label>
-    <div class="mt-5">
-      <Checkbox
-        label='Same time for all dates'
-        isChecked={useSameTimesForAllDates.value}
-        onChange$={isChecked => {
-          useSameTimesForAllDates.value = isChecked;
-        }}
-      />
-    </div>
-    <div class="mt-5">
-      {props.dates.map(date =>
-        <TimePerDayPicker
-          key={`time-per-day-picker-${date.toISOString()}`}
-          day={date}
-          onChange$={times => { }}
-        />)}
-    </div>
-  </div>
-})
-
-const appointmentRequestSchema = z.object({
-  creatorId: z.string(),
-  title: z
-    .string()
-    .nonempty("You must specify a title."),
-  description: z.string().optional(),
-  location: z.string().optional(),
-  availableTimes: z
-    .array(z.object({
-      startTime: z.date(),
-      endTime: z.date()
-    }))
-    .nonempty("You must specify at least one date and time.")
-});
-type AppointmentRequest = z.infer<typeof appointmentRequestSchema>;
-
-export const useFormLoader = routeLoader$<InitialValues<AppointmentRequest>>(() => defaultAppointmentRequest as InitialValues<AppointmentRequest>);
-
-export const useCreateAppointment = globalAction$(
-  async (data, requestEvent) => {
-    const appointmentId = nanoid();
-
-    const kv = createQwikCompatibleKvClient();
-
-    const creator = await kv.get(getUserKey(data.creatorId));
-    if (!creator) {
-      requestEvent.status(400);
-      return {};
-    }
-
-    await kv.set(getAppointmentKey(appointmentId), {
-      creatorId: data.creatorId,
-      title: data.title,
-      description: data.description,
-      location: data.location,
-      availableTimes: data.availableTimes.map(x => ({
-        ...x,
-        id: nanoid()
-      })),
-      attendees: []
-    } as Appointment);
-
-    return { id: appointmentId };
-  },
-  zod$(appointmentRequestSchema));
-
-export const useCreateUser = globalAction$(
-  async (data, requestEvent) => {
-    const userId = nanoid();
-
-    const kv = createQwikCompatibleKvClient();
-    await kv.set(getUserKey(userId), {}, {});
-
-    return { id: userId };
-  },
-  zod$(z.object({})));
 
