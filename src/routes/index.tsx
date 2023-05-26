@@ -1,13 +1,15 @@
 import { component$, useSignal, $ } from '@builder.io/qwik';
-import { DocumentHead, useNavigate } from '@builder.io/qwik-city';
-import { SubmitHandler, getValue, getValues, insert, remove, setValues, useForm, zodForm$ } from '@modular-forms/qwik';
-import { TimeSection } from './time-section';
+import { DocumentHead, routeLoader$, useNavigate } from '@builder.io/qwik-city';
+import { InitialValues, SubmitHandler, getValue, getValues, insert, remove, replace, setValue, setValues, swap, useForm, zodForm$ } from '@modular-forms/qwik';
 import { DurationSection } from './duration-section';
 import { DateSection } from './date-section';
 import { Section } from './section';
-import { AppointmentRequest, appointmentRequestSchema, useCreateAppointment, useCreateUser, useFormLoader } from './backend';
-import { orderBy } from 'lodash';
-import { format } from 'date-fns';
+import { AppointmentRequest, appointmentRequestSchema, defaultAppointmentRequest, useCreateAppointment, useCreateUser } from './backend';
+import { orderBy, times } from 'lodash';
+import { format, setHours, setMinutes } from 'date-fns';
+import TimePicker from '~/components/time-picker';
+import { time } from 'console';
+import Button from '~/components/button';
 
 export const head: DocumentHead = {
   title: 'Poodle',
@@ -19,19 +21,16 @@ export const head: DocumentHead = {
   ],
 };
 
+export const useFormLoader = routeLoader$<InitialValues<AppointmentRequest>>(() => defaultAppointmentRequest as InitialValues<AppointmentRequest>);
+
 export default component$(() => {
   const createAppointment = useCreateAppointment();
   const createUser = useCreateUser();
   const navigate = useNavigate();
 
-  const selectedDates = useSignal(new Array<Date>());
-
   const [form, { Form, Field, FieldArray }] = useForm({
     loader: useFormLoader(),
     validate: zodForm$(appointmentRequestSchema)
-  });
-
-  const onSelectedDatesChanged = $((dates: Date[]) => {
   });
 
   const onFormSubmitted: SubmitHandler<AppointmentRequest> = $(async (store) => {
@@ -124,41 +123,82 @@ export default component$(() => {
       <DurationSection />
 
       <DateSection
-        selectedDates={selectedDates.value}
-        onAdded={date => {
-          selectedDates.value = orderBy([...selectedDates.value, date], x => x.getTime());
+        onAdded$={date => {
           insert(form, "startTimesPerDay", {
             value: {
               day: date,
               times: [date]
-            },
-            at: selectedDates.value.indexOf(date)
+            }
           });
         }}
-        onDeleted={date => remove(
-          form,
-          "startTimesPerDay",
-          { at: selectedDates.value.indexOf(date) })}
+        onDeleted$={index => {
+          remove(
+            form,
+            "startTimesPerDay",
+            { 
+              at: index
+            });
+        }}
       />
 
       <FieldArray name="startTimesPerDay">
-        {(fieldArray) => <>
-          {fieldArray.items.map((item, index) =>
-            <div key={item}>
+        {(dayFieldArray) => <>
+          {dayFieldArray.items.map((item, dayIndex) => {
+            const dayDate = getValue(form, `startTimesPerDay.${dayIndex}.day`)!;
+
+            return <div key={item}>
               <label for="about" class="block text-sm font-light leading-6 text-gray-900 mb-2">
-                {format(getValue(form, `${fieldArray.name}.${index}.day`)!, "PPP")}
+                {format(dayDate, "PPP")}
               </label>
               <div class="mb-5">
-                <Field name={`${fieldArray.name}.${index}.`}>
-                  {(field, props) => <>
-                    <TimeSection
-                      dates={selectedDates.value}
-                    />
+                <FieldArray name={`${dayFieldArray.name}.${dayIndex}.times`}>
+                  {(timeFieldArray) => <>
+                    {timeFieldArray.items.map((item, timeIndex) =>
+                      <div
+                        key={item}
+                        class="flex mb-2"
+                      >
+                        <TimePicker
+                          selectedTime={getValue(form, `${timeFieldArray.name}.${timeIndex}`)}
+                          onChange$={newTime => replace(form, `${timeFieldArray.name}`, {
+                            at: timeIndex,
+                            value: newTime
+                          })}
+                        />
+                        <button
+                          title="Remove time"
+                          type="button"
+                          class="ml-1 rounded-full p-1 text-indigo-600 focus-visible:outline"
+                          onClick$={() => {
+                            
+                          }}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                          </svg>
+                        </button>
+                      </div>
+                    )}
                   </>}
-                </Field>
+                </FieldArray>
+
+                <Button
+                  class="mt-1"
+                  label="Add time"
+                  onClick$={() => {
+                    insert(form, `${dayFieldArray.name}.${dayIndex}.times`, {
+                      value: dayDate
+                    });
+                  }}
+                >
+                  <svg q:slot="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+
+                </Button>
               </div>
-            </div>
-          )}
+            </div>;
+          })}
         </>}
       </FieldArray>
     </Section>

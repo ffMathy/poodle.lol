@@ -2,11 +2,11 @@ import { component$, useComputed$, useSignal } from "@builder.io/qwik";
 import { addDays, addMonths, format, getMonth, isMonday, isSunday, isToday as isTodayFn, lastDayOfMonth, nextSunday, previousMonday, startOfMonth } from "date-fns";
 
 export default component$((props: {
-  selectedDates: Date[],
-  onAdded: (date: Date) => void,
-  onDeleted: (date: Date) => void
+  onAdded$: (date: Date) => void,
+  onDeleted$: (index: number) => void
 }) => {
   const startOfCurrentMonthDate = useSignal(new Date());
+  const selectedDates = useSignal(new Array<Date>());
 
   const startDate = useComputed$(() => {
     const firstDay = startOfMonth(startOfCurrentMonthDate.value);
@@ -70,7 +70,7 @@ export default component$((props: {
           const isCurrentMonth = getMonth(date) === getMonth(startOfCurrentMonthDate.value);
           const isToday = isTodayFn(date);
 
-          const isSelected = !!props.selectedDates.find(x => x.getTime() === date.getTime());
+          const isSelected = !!selectedDates.value.find(x => x.getTime() === date.getTime());
 
           const isTopLeftDay = index === 0;
           const isTopRightDay = index === 6;
@@ -112,10 +112,12 @@ export default component$((props: {
             type="button" 
             class={buttonClasses.filter(x => x).join(' ')}
             onClick$={() => {
-              if(!props.selectedDates.includes(date)) {
-                props.onAdded(date);
+              if(!isSelected) {
+                selectedDates.value = [...selectedDates.value, date];
+                props.onAdded$(date);
               } else {
-                props.onDeleted(date);
+                props.onDeleted$(selectedDates.value.findIndex(x => x.getTime() === date.getTime()));
+                selectedDates.value = selectedDates.value.filter(x => x.getTime() !== date.getTime());
               }
             }}
           >

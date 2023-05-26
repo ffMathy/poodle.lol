@@ -39,7 +39,7 @@ export const appointmentRequestSchema = z.object({
 });
 export type AppointmentRequest = z.infer<typeof appointmentRequestSchema>;
 
-const defaultAppointmentRequest: AppointmentRequest = {
+export const defaultAppointmentRequest: AppointmentRequest = {
     startTimesPerDay: [] as any,
     duration: {} as any,
     creatorId: "",
@@ -47,8 +47,6 @@ const defaultAppointmentRequest: AppointmentRequest = {
     description: "",
     location: ""
 };
-
-export const useFormLoader = routeLoader$<InitialValues<AppointmentRequest>>(() => defaultAppointmentRequest as InitialValues<AppointmentRequest>);
 
 export const useCreateAppointment = globalAction$(
     async (data, requestEvent) => {
