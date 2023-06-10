@@ -144,14 +144,14 @@ export default component$(() => {
       <FieldArray name="startTimesPerDay">
         {(dayFieldArray) => <>
           {dayFieldArray.items.map((item, dayIndex) => {
-            const dayDate = getValue(form, `startTimesPerDay.${dayIndex}.day`)!;
-
             return <div key={item}>
               <label for="about" class="block text-sm font-light leading-6 text-gray-900 mb-2">
-                {format(dayDate, "PPP")}
+                <Field name={`${dayFieldArray.name}.${dayIndex}.day`} type="Date">
+                  {field => <>{!field?.value ? "" : format(field.value, "PPP")}</>}
+                </Field>
               </label>
               <div class="mb-5">
-                <FieldArray name={`${dayFieldArray.name}.${dayIndex}.times`}>
+                {/* <FieldArray name={`${dayFieldArray.name}.${dayIndex}.times`}>
                   {(timeFieldArray) => <>
                     {timeFieldArray.items.map((item, timeIndex) =>
                       <div
@@ -180,13 +180,13 @@ export default component$(() => {
                       </div>
                     )}
                   </>}
-                </FieldArray>
+                </FieldArray> */}
 
-                <Button
+                {/* <Button
                   class="mt-1"
                   label="Add time"
                   onClick$={() => {
-                    insert(form, `${dayFieldArray.name}.${dayIndex}.times`, {
+                    insert(form, `startTimesPerDay.${dayIndex}.times`, {
                       value: dayDate
                     });
                   }}
@@ -195,7 +195,7 @@ export default component$(() => {
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
 
-                </Button>
+                </Button> */}
               </div>
             </div>;
           })}
