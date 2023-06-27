@@ -151,11 +151,11 @@ export default component$(() => {
             const day = getValue(form, `${dayFieldArray.name}.${dayIndex}.day`, {
               shouldActive: false
             })!;
-            return <div key={item}>
+            return <div key={item} class="col-span-full">
               <label for="about" class="block text-sm font-light leading-6 text-gray-900 mb-2">
                 {format(day, "PPP")}
               </label>
-              <div class="mb-5">
+              <div>
                 <FieldArray name={`${dayFieldArray.name}.${dayIndex}.times`}>
                   {(timeFieldArray) => <>
                     {timeFieldArray.items.map((item, timeIndex) =>
@@ -175,7 +175,7 @@ export default component$(() => {
                           type="button"
                           class="ml-1 rounded-full p-1 text-indigo-600 focus-visible:outline"
                           onClick$={() => {
-                            
+                            remove(form, timeFieldArray.name, { at: timeIndex })
                           }}
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
@@ -202,7 +202,7 @@ export default component$(() => {
 
                 </Button>
               </div>
-            </div>;
+            </div>
           })}
         </>}
         </FieldArray>
