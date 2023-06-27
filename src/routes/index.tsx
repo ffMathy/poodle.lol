@@ -30,10 +30,14 @@ export default component$(() => {
 
   const [form, { Form, Field, FieldArray }] = useForm({
     loader: useFormLoader(),
-    validate: zodForm$(appointmentRequestSchema)
+    validate: zodForm$(appointmentRequestSchema),
+    fieldArrays: [
+      "startTimesPerDay",
+      "startTimesPerDay.$.times"
+    ]
   });
 
-  const onFormSubmitted: SubmitHandler<AppointmentRequest> = $(async (store) => {
+  const onFormSubmitted: SubmitHandler<AppointmentRequest> = $(async (store: AppointmentRequest) => {
     const currentUserId = localStorage.getItem("user-id");
     if (currentUserId) {
       store.creatorId = currentUserId;
@@ -143,15 +147,16 @@ export default component$(() => {
 
       <FieldArray name="startTimesPerDay">
         {(dayFieldArray) => <>
-          {dayFieldArray.items.map((item, dayIndex) => {
+          {dayFieldArray?.items.map((item, dayIndex) => {
+            const day = getValue(form, `${dayFieldArray.name}.${dayIndex}.day`, {
+              shouldActive: false
+            })!;
             return <div key={item}>
               <label for="about" class="block text-sm font-light leading-6 text-gray-900 mb-2">
-                <Field name={`${dayFieldArray.name}.${dayIndex}.day`} type="Date">
-                  {field => <>{!field?.value ? "" : format(field.value, "PPP")}</>}
-                </Field>
+                {format(day, "PPP")}
               </label>
               <div class="mb-5">
-                {/* <FieldArray name={`${dayFieldArray.name}.${dayIndex}.times`}>
+                <FieldArray name={`${dayFieldArray.name}.${dayIndex}.times`}>
                   {(timeFieldArray) => <>
                     {timeFieldArray.items.map((item, timeIndex) =>
                       <div
@@ -159,7 +164,7 @@ export default component$(() => {
                         class="flex mb-2"
                       >
                         <TimePicker
-                          selectedTime={getValue(form, `${timeFieldArray.name}.${timeIndex}`)}
+                          selectedTime={getValue(form, `${timeFieldArray.name}.${timeIndex}`, { shouldActive: false })}
                           onChange$={newTime => replace(form, `${timeFieldArray.name}`, {
                             at: timeIndex,
                             value: newTime
@@ -180,14 +185,14 @@ export default component$(() => {
                       </div>
                     )}
                   </>}
-                </FieldArray> */}
+                </FieldArray>
 
-                {/* <Button
+                <Button
                   class="mt-1"
                   label="Add time"
                   onClick$={() => {
-                    insert(form, `startTimesPerDay.${dayIndex}.times`, {
-                      value: dayDate
+                    insert(form, `${dayFieldArray.name}.${dayIndex}.times`, {
+                      value: day
                     });
                   }}
                 >
@@ -195,12 +200,12 @@ export default component$(() => {
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
 
-                </Button> */}
+                </Button>
               </div>
             </div>;
           })}
         </>}
-      </FieldArray>
+        </FieldArray>
     </Section>
 
     <Section>
