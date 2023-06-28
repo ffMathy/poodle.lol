@@ -10,6 +10,7 @@ import { format, setHours, setMinutes } from 'date-fns';
 import TimePicker from '~/components/time-picker';
 import { time } from 'console';
 import Button from '~/components/button';
+import ErrorLabel from '~/components/error-label';
 
 export const head: DocumentHead = {
   title: 'Poodle',
@@ -65,7 +66,9 @@ export default component$(() => {
       <div class="sm:col-span-4">
         <Field name="title">
           {(field, props) => <>
-            <label for={props.name} class="block text-sm font-medium leading-6 text-gray-900">Title</label>
+            <label for={props.name} class="block text-sm font-medium leading-6 text-gray-900">
+              Title
+            </label>
             <div class="mt-2">
               <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
                 <input
@@ -75,7 +78,7 @@ export default component$(() => {
                   {...props} />
               </div>
             </div>
-            {field.error && <p class="mt-2 text-sm text-red-600">{field.error}</p>}
+            <ErrorLabel error={field.error} />
           </>}
         </Field>
       </div>
@@ -83,7 +86,9 @@ export default component$(() => {
       <div class="col-span-full">
         <Field name="description">
           {(field, props) => <>
-            <label for={props.name} class="block text-sm font-medium leading-6 text-gray-900">Description</label>
+            <label for={props.name} class="block text-sm font-medium leading-6 text-gray-900">
+              Description
+            </label>
             <div class="mt-2">
               <textarea
                 rows={4}
@@ -92,7 +97,7 @@ export default component$(() => {
                 {...props}
               />
             </div>
-            {field.error && <p class="mt-2 text-sm text-red-600">{field.error}</p>}
+            <ErrorLabel error={field.error} />
           </>}
         </Field>
       </div>
@@ -105,7 +110,9 @@ export default component$(() => {
       <div class="col-span-full">
         <Field name="location">
           {(field, props) => <>
-            <label for={props.name} class="block text-sm font-medium leading-6 text-gray-900">Location</label>
+            <label for={props.name} class="block text-sm font-medium leading-6 text-gray-900">
+              Location
+            </label>
             <div class="mt-2">
               <textarea
                 rows={2}
@@ -114,7 +121,7 @@ export default component$(() => {
                 {...props}
               />
             </div>
-            {field.error && <p class="mt-2 text-sm text-red-600">{field.error}</p>}
+            <ErrorLabel error={field.error} />
           </>}
         </Field>
       </div>
@@ -124,7 +131,11 @@ export default component$(() => {
       title="When"
       description="Add the times that are valid for attendees to pick from."
     >
-      <DurationSection />
+      <Field name="durationInMinutes" type="number">
+        {(field, props) => 
+          <input type="number" {...props} />
+        }
+      </Field>
 
       <DateSection
         onAdded$={date => {

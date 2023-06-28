@@ -1,7 +1,12 @@
 import { component$, useComputed$, useSignal } from "@builder.io/qwik";
+import { FieldElementProps, FieldPath, FieldStore, FieldValues } from "@modular-forms/qwik";
 import Combobox from "~/components/combobox";
+import ErrorLabel from "~/components/error-label";
 
-export const DurationSection = component$(() => {
+export const DurationSection = component$(<TFieldValues extends FieldValues, TFieldPath extends FieldPath<TFieldValues>>(props: {
+  fieldStore: FieldStore<TFieldValues, TFieldPath>,
+  fieldProps: FieldElementProps<TFieldValues, TFieldPath>
+}) => {
     type Duration = { hours: number, minutes: number };
   
     const durations = useComputed$(() => {
@@ -20,12 +25,15 @@ export const DurationSection = component$(() => {
     const selectedDuration = useSignal<Duration>(() => durations.value[0]);
   
     return <div class="sm:col-span-4">
-      <label for="Duration" class="block text-sm font-medium leading-6 text-gray-900">Duration</label>
+      <label for={props.fieldProps.name} class="block text-sm font-medium leading-6 text-gray-900">
+        Duration
+      </label>
       <div class="mt-2">
         <Combobox
+          fieldProps={props.fieldProps}
           values={durations.value}
           selectedValue={selectedDuration.value}
-          onChange$={value => {
+          onChange$={(value) => {
             selectedDuration.value = value;
           }}
           label="Duration"
@@ -36,6 +44,7 @@ export const DurationSection = component$(() => {
             return `${duration.hours}h ${duration.minutes}m`;
           }}
         />
+        <ErrorLabel error={props.fieldStore.error} />
       </div>
     </div>
   });

@@ -5,7 +5,7 @@ import { z } from "zod";
 import { getUserKey, getAppointmentKey } from "~/utils/keys";
 import { createQwikCompatibleKvClient } from "~/utils/kv";
 import { Appointment } from "./[appointmentId]";
-import { add } from "date-fns";
+import { add, addMinutes } from "date-fns";
 
 
 export const appointmentRequestSchema = z.object({
@@ -19,16 +19,9 @@ export const appointmentRequestSchema = z.object({
     location: z
         .string()
         .optional(),
-    duration: z
-        .object({
-            hours: z
-                .number()
-                .nonnegative("Hours must be positive."),
-            minutes: z
-                .number()
-                .nonnegative("Minutes must be positive.")
-        })
-        .required(),
+    durationInMinutes: z
+        .number()
+        .nonnegative("Minutes must be positive."),
     startTimesPerDay: z
         .array(z
             .object({
@@ -43,7 +36,7 @@ export type AppointmentRequest = z.infer<typeof appointmentRequestSchema>;
 
 export const defaultAppointmentRequest: AppointmentRequest = {
     startTimesPerDay: [] as any,
-    duration: {} as any,
+    durationInMinutes: {} as any,
     creatorId: "",
     title: "",
     description: "",
@@ -70,7 +63,7 @@ export const useCreateAppointment = globalAction$(
             availableTimes: data.startTimesPerDay.flatMap(x => x.times).map(x => ({
                 id: nanoid(),
                 startTime: x,
-                endTime: add(x, data.duration)
+                endTime: addMinutes(x, data.durationInMinutes)
             })),
             attendees: []
         } as Appointment);
