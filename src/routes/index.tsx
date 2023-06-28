@@ -11,6 +11,7 @@ import TimePicker from '~/components/time-picker';
 import { time } from 'console';
 import Button from '~/components/button';
 import ErrorLabel from '~/components/error-label';
+import { start } from 'repl';
 
 export const head: DocumentHead = {
   title: 'Poodle',
@@ -132,12 +133,17 @@ export default component$(() => {
       description="Add the times that are valid for attendees to pick from."
     >
       <Field name="durationInMinutes" type="number">
-        {(field, props) => 
-          <input type="number" {...props} />
-        }
+        {(field, props) => <>
+          <DurationSection
+            fieldProps={props}
+            fieldStore={field}
+          />
+          <ErrorLabel error={field.error} />
+        </>}
       </Field>
 
       <DateSection
+        key="date-section"
         onAdded$={date => {
           insert(form, "startTimesPerDay", {
             value: {
@@ -150,16 +156,18 @@ export default component$(() => {
           remove(
             form,
             "startTimesPerDay",
-            { 
+            {
               at: index
             });
         }}
       />
 
       <FieldArray name="startTimesPerDay">
-        {(dayFieldArray) => <>
-          {dayFieldArray?.items.map((item, dayIndex) => {
-            const day = getValue(form, `${dayFieldArray.name}.${dayIndex}.day`, {
+        {(startTimesPerDayArray) => <>
+          <ErrorLabel error={startTimesPerDayArray.error} />
+
+          {startTimesPerDayArray.items.map((item, dayIndex) => {
+            const day = getValue(form, `${startTimesPerDayArray.name}.${dayIndex}.day`, {
               shouldActive: false
             })!;
             return <div key={item} class="col-span-full">
@@ -167,7 +175,7 @@ export default component$(() => {
                 {format(day, "PPP")}
               </label>
               <div>
-                <FieldArray name={`${dayFieldArray.name}.${dayIndex}.times`}>
+                <FieldArray name={`${startTimesPerDayArray.name}.${dayIndex}.times`}>
                   {(timeFieldArray) => <>
                     {timeFieldArray.items.map((item, timeIndex) =>
                       <div
@@ -183,9 +191,11 @@ export default component$(() => {
                         />
                         <button
                           title="Remove time"
+                          disabled={timeFieldArray.items.length === 1}
                           type="button"
                           class="ml-1 rounded-full p-1 text-indigo-600 focus-visible:outline"
                           onClick$={() => {
+
                             remove(form, timeFieldArray.name, { at: timeIndex })
                           }}
                         >
@@ -202,7 +212,7 @@ export default component$(() => {
                   class="mt-1"
                   label="Add time"
                   onClick$={() => {
-                    insert(form, `${dayFieldArray.name}.${dayIndex}.times`, {
+                    insert(form, `${startTimesPerDayArray.name}.${dayIndex}.times`, {
                       value: day
                     });
                   }}
@@ -216,7 +226,7 @@ export default component$(() => {
             </div>
           })}
         </>}
-        </FieldArray>
+      </FieldArray>
     </Section>
 
     <Section>

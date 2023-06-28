@@ -25,7 +25,8 @@ export const appointmentRequestSchema = z.object({
     startTimesPerDay: z
         .array(z
             .object({
-                day: z.date(),
+                day: z
+                    .date(),
                 times: z
                     .array(z.date())
                     .nonempty("You must specify at least one time for all the dates selected.")
@@ -36,7 +37,7 @@ export type AppointmentRequest = z.infer<typeof appointmentRequestSchema>;
 
 export const defaultAppointmentRequest: AppointmentRequest = {
     startTimesPerDay: [] as any,
-    durationInMinutes: {} as any,
+    durationInMinutes: 15,
     creatorId: "",
     title: "",
     description: "",
