@@ -35,8 +35,9 @@ export const appointmentRequestSchema = z.object({
                 day: z.date(),
                 times: z
                     .array(z.date())
-                    .nonempty("You must specify at least one date and time.")
+                    .nonempty("You must specify at least one time for all the dates selected.")
             }))
+        .nonempty("You must specify at least one date.")
 });
 export type AppointmentRequest = z.infer<typeof appointmentRequestSchema>;
 
