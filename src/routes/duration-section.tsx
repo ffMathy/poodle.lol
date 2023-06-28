@@ -28,6 +28,7 @@ export const DurationSection = component$(() => {
           onChange$={value => {
             selectedDuration.value = value;
           }}
+          label="Duration"
           onRenderText$={duration => {
             if (!duration.hours)
               return `${duration.minutes}m`;
