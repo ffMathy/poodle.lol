@@ -1,4 +1,4 @@
-import { component$, useSignal, $ } from '@builder.io/qwik';
+import { component$, useSignal, $, useVisibleTask$ } from '@builder.io/qwik';
 import { DocumentHead, routeLoader$, useNavigate } from '@builder.io/qwik-city';
 import { InitialValues, SubmitHandler, getValue, getValues, insert, remove, replace, setValue, setValues, swap, useForm, zodForm$ } from '@modular-forms/qwik';
 import { DurationSection } from './duration-section';
@@ -39,6 +39,12 @@ export default component$(() => {
     ]
   });
 
+  useVisibleTask$(() => {
+    setInterval(() => {
+      console.log(JSON.stringify(getValues(form)))
+    }, 1000)
+  })
+
   const onFormSubmitted: SubmitHandler<AppointmentRequest> = $(async (store: AppointmentRequest) => {
     const currentUserId = localStorage.getItem("user-id");
     if (currentUserId) {
@@ -59,7 +65,7 @@ export default component$(() => {
     navigate(`/${result.value.id!}`)
   });
 
-  return <Form onSubmit$={onFormSubmitted}>
+  return <Form onSubmit$={onFormSubmitted} shouldActive={false}>
     <Section
       title="What"
       description="Describe what your event is about."
@@ -195,7 +201,6 @@ export default component$(() => {
                           type="button"
                           class="ml-1 rounded-full p-1 text-indigo-600 focus-visible:outline"
                           onClick$={() => {
-
                             remove(form, timeFieldArray.name, { at: timeIndex })
                           }}
                         >
