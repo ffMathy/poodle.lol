@@ -39,12 +39,6 @@ export default component$(() => {
     ]
   });
 
-  useVisibleTask$(() => {
-    setInterval(() => {
-      console.log(JSON.stringify(getValues(form)))
-    }, 1000)
-  })
-
   const onFormSubmitted: SubmitHandler<AppointmentRequest> = $(async (store: AppointmentRequest) => {
     const currentUserId = localStorage.getItem("user-id");
     if (currentUserId) {
@@ -189,6 +183,10 @@ export default component$(() => {
                         class="flex mb-2"
                       >
                         <TimePicker
+                          fieldProps={{
+                            name: `${timeFieldArray.name}.${timeIndex}`,
+                            ref: timeFieldArray.ref,
+                          }}
                           selectedTime={getValue(form, `${timeFieldArray.name}.${timeIndex}`, { shouldActive: false })}
                           onChange$={newTime => replace(form, `${timeFieldArray.name}`, {
                             at: timeIndex,

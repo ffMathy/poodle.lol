@@ -23,14 +23,15 @@ export const appointmentRequestSchema = z.object({
         .number()
         .nonnegative("Minutes must be positive."),
     startTimesPerDay: z
-        .array(z
-            .object({
+        .array(
+            z.object({
                 day: z
-                    .date(),
+                    .date({ required_error: "For each date, you must specify the day." }),
                 times: z
-                    .array(z.date())
+                    .array(z.date({ required_error: "For each date, you must specify a time." }))
                     .nonempty("You must specify at least one time for all the dates selected.")
-            }))
+            }),
+            { required_error: "You must specify at least one date." })
         .nonempty("You must specify at least one date.")
 });
 export type AppointmentRequest = z.infer<typeof appointmentRequestSchema>;

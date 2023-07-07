@@ -2,12 +2,14 @@ import { component$, useComputed$, useSignal } from "@builder.io/qwik";
 import Combobox from "./combobox";
 import { format, setHours, setMinutes } from "date-fns";
 import Button from "./button";
+import { FieldElementProps, FieldPath, FieldValues } from "@modular-forms/qwik";
 
-const TimePicker = component$((props: {
+const TimePicker = component$(<TValue, TFieldValues extends FieldValues, TFieldPath extends FieldPath<TFieldValues>>(props: {
     key?: string,
     selectedTime?: Date,
     class?: string,
-    onChange$: (time: Date) => void
+    onChange$: (time: Date) => void,
+    fieldProps: FieldElementProps<TFieldValues, TFieldPath>
 }) => {
     const times = useComputed$(() => {
         const result = new Array<Date>();
@@ -25,12 +27,13 @@ const TimePicker = component$((props: {
         return result;
     });
 
-    return <Combobox<Date>
+    return <Combobox
         key={`time-picker-${props.key}`}
         label="Pick duration"
         class={props.class}
         values={times.value}
         selectedValue={props.selectedTime}
+        fieldProps={props.fieldProps}
         placeholder={format(setMinutes(setHours(new Date(), 0), 0), "p")}
         onChange$={props.onChange$}
         onRenderText$={date => format(date, "p")}
