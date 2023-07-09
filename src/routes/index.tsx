@@ -122,19 +122,15 @@ export default component$(() => {
       description="Add the times that are valid for attendees to pick from."
     >
       <div class="sm:col-span-4">
-        <Field name="durationInMinutes" type="number">
-          {(field, props) =>
-            <Select
-              {...props}
-              error={field.error}
-              value={JSON.stringify(field.value)}
-              options={getDurationsInMinutes().map(durationInMinutes => ({
-                label: renderDurationLabelFromDurationInMinutes(durationInMinutes),
-                value: JSON.stringify(durationInMinutes)
-              }))}
-              label="Duration"
-            />}
-        </Field>
+        <Select
+            form={form}
+            fieldPath="durationInMinutes"
+            options={getDurationsInMinutes().map(durationInMinutes => ({
+              label: renderDurationLabelFromDurationInMinutes(durationInMinutes),
+              value: durationInMinutes
+            }))}
+            label="Duration"
+          />
       </div>
 
       <DateSection
