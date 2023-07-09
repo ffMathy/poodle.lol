@@ -182,17 +182,16 @@ export default component$(() => {
                         key={item}
                         class="flex mb-2"
                       >
-                        <TimePicker
-                          fieldProps={{
-                            name: `${timeFieldArray.name}.${timeIndex}`,
-                            ref: timeFieldArray.ref,
-                          }}
-                          selectedTime={getValue(form, `${timeFieldArray.name}.${timeIndex}`, { shouldActive: false })}
-                          onChange$={newTime => replace(form, `${timeFieldArray.name}`, {
-                            at: timeIndex,
-                            value: newTime
-                          })}
-                        />
+                        <Field name={`${startTimesPerDayArray.name}.${dayIndex}.times.${timeIndex}`}>
+                          {(field, props) => <TimePicker
+                            fieldProps={props}
+                            selectedTime={getValue(form, `${timeFieldArray.name}.${timeIndex}`, { shouldActive: false })}
+                            onChange$={newTime => replace(form, `${timeFieldArray.name}`, {
+                              at: timeIndex,
+                              value: newTime
+                            })}
+                          />}
+                        </Field>
                         <button
                           title="Remove time"
                           disabled={timeFieldArray.items.length === 1}
