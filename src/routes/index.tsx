@@ -1,17 +1,19 @@
 import { component$, useSignal, $, useVisibleTask$ } from '@builder.io/qwik';
 import { DocumentHead, routeLoader$, useNavigate } from '@builder.io/qwik-city';
 import { InitialValues, SubmitHandler, getValue, getValues, insert, remove, replace, setValue, setValues, swap, useForm, zodForm$ } from '@modular-forms/qwik';
-import { DurationSection } from './duration-section';
+import { getDurationsInMinutes, renderLabelFromValue as renderDurationLabelFromDurationInMinutes } from './duration-section';
 import { DateSection } from './date-section';
 import { Section } from './section';
 import { AppointmentRequest, appointmentRequestSchema, defaultAppointmentRequest, useCreateAppointment, useCreateUser } from './backend';
 import { orderBy, times } from 'lodash';
 import { format, setHours, setMinutes } from 'date-fns';
-import TimePicker from '~/components/time-picker';
 import { time } from 'console';
 import Button from '~/components/button';
-import ErrorLabel from '~/components/error-label';
+import { InputError } from '~/components/input-error';
 import { start } from 'repl';
+import { TextInput } from '~/components/text-input';
+import { TextArea } from '~/components/text-area';
+import { Select } from '~/components/select';
 
 export const head: DocumentHead = {
   title: 'Poodle',
@@ -60,46 +62,40 @@ export default component$(() => {
   });
 
   return <Form onSubmit$={onFormSubmitted} shouldActive={false}>
+    {process.env.NODE_ENV === "development" && <div class="mb-5">
+      <button class="bg-red-400" onClick$={() => {
+        const values = getValues(form);
+        console.log(values);
+      }}>
+        Fetch form
+      </button>
+    </div>}
     <Section
       title="What"
       description="Describe what your event is about."
     >
       <div class="sm:col-span-4">
         <Field name="title">
-          {(field, props) => <>
-            <label for={props.name} class="block text-sm font-medium leading-6 text-gray-900">
-              Title
-            </label>
-            <div class="mt-2">
-              <div class="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                <input
-                  type="text"
-                  class="block flex-1 border-0 bg-transparent text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                  placeholder="John's birthday party"
-                  {...props} />
-              </div>
-            </div>
-            <ErrorLabel error={field.error} />
-          </>}
+          {(field, props) =>
+            <TextInput
+              {...props}
+              type="text"
+              error={field.error}
+              value={field.value}
+              label="Title"
+              placeholder="John's birthday party" />}
         </Field>
       </div>
 
       <div class="col-span-full">
         <Field name="description">
-          {(field, props) => <>
-            <label for={props.name} class="block text-sm font-medium leading-6 text-gray-900">
-              Description
-            </label>
-            <div class="mt-2">
-              <textarea
-                rows={4}
-                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                placeholder="Looking forward to seeing you at my birthday party! Remember the presents."
-                {...props}
-              />
-            </div>
-            <ErrorLabel error={field.error} />
-          </>}
+          {(field, props) =>
+            <TextArea
+              {...props}
+              error={field.error}
+              value={field.value}
+              label="Description"
+              placeholder="Looking forward to seeing you at my birthday party! Remember the presents." />}
         </Field>
       </div>
     </Section>
@@ -110,20 +106,13 @@ export default component$(() => {
     >
       <div class="col-span-full">
         <Field name="location">
-          {(field, props) => <>
-            <label for={props.name} class="block text-sm font-medium leading-6 text-gray-900">
-              Location
-            </label>
-            <div class="mt-2">
-              <textarea
-                rows={2}
-                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                placeholder="Central Park"
-                {...props}
-              />
-            </div>
-            <ErrorLabel error={field.error} />
-          </>}
+          {(field, props) =>
+            <TextArea
+              {...props}
+              error={field.error}
+              value={field.value}
+              label="Location"
+              placeholder="Central Park" />}
         </Field>
       </div>
     </Section>
@@ -132,15 +121,21 @@ export default component$(() => {
       title="When"
       description="Add the times that are valid for attendees to pick from."
     >
-      <Field name="durationInMinutes" type="number">
-        {(field, props) => <>
-          <DurationSection
-            fieldProps={props}
-            fieldStore={field}
-          />
-          <ErrorLabel error={field.error} />
-        </>}
-      </Field>
+      <div class="sm:col-span-4">
+        <Field name="durationInMinutes" type="number">
+          {(field, props) =>
+            <Select
+              {...props}
+              error={field.error}
+              value={JSON.stringify(field.value)}
+              options={getDurationsInMinutes().map(durationInMinutes => ({
+                label: renderDurationLabelFromDurationInMinutes(durationInMinutes),
+                value: JSON.stringify(durationInMinutes)
+              }))}
+              label="Duration"
+            />}
+        </Field>
+      </div>
 
       <DateSection
         key="date-section"
@@ -164,7 +159,7 @@ export default component$(() => {
 
       <FieldArray name="startTimesPerDay">
         {(startTimesPerDayArray) => <>
-          <ErrorLabel error={startTimesPerDayArray.error} />
+          <InputError error={startTimesPerDayArray.error} />
 
           {startTimesPerDayArray.items.map((item, dayIndex) => {
             const day = getValue(form, `${startTimesPerDayArray.name}.${dayIndex}.day`, {
@@ -179,10 +174,10 @@ export default component$(() => {
                   {(timeFieldArray) => <>
                     {timeFieldArray.items.map((item, timeIndex) =>
                       <div
-                        key={item}
+                        key={`time-${item}-${timeIndex}`}
                         class="flex mb-2"
                       >
-                        <Field name={`${startTimesPerDayArray.name}.${dayIndex}.times.${timeIndex}`}>
+                        {/* <Field name={`${timeFieldArray.name}.${timeIndex}`}>
                           {(field, props) => <TimePicker
                             fieldProps={props}
                             selectedTime={getValue(form, `${timeFieldArray.name}.${timeIndex}`, { shouldActive: false })}
@@ -191,10 +186,10 @@ export default component$(() => {
                               value: newTime
                             })}
                           />}
-                        </Field>
+                        </Field> */}
                         <button
                           title="Remove time"
-                          disabled={timeFieldArray.items.length === 1}
+                          hidden={timeFieldArray.items.length === 1}
                           type="button"
                           class="ml-1 rounded-full p-1 text-indigo-600 focus-visible:outline"
                           onClick$={() => {
@@ -219,7 +214,7 @@ export default component$(() => {
                     });
                   }}
                 >
-                  <svg q:slot="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                  <svg q: slot="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
 
