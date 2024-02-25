@@ -27,10 +27,10 @@ export const TimePicker = component$((props: {
     return <Select<Date>
         name={`time-picker-${props.key}`}
         key={`time-picker-${props.key}`}
-        label="Pick duration"
+        label="Pick time"
         class={props.class}
         options={times.value.map(x => ({
-            label: x.toLocaleTimeString(),
+            label: format(x, "p"),
             value: x
         }))}
         value={props.selectedTime}

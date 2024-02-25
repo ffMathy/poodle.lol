@@ -128,13 +128,14 @@ export default component$(() => {
           <Field name="durationInMinutes" type="number">
             {(field, props) => 
               <Select<number>
-                form={form}
-                fieldPath="durationInMinutes"
+                {...props}
+                value={getValue(form, field.name, { shouldActive: false })}
                 options={getDurationsInMinutes().map(durationInMinutes => ({
                   label: getLabelFromDurationInMinutes(durationInMinutes),
                   value: durationInMinutes
                 }))}
                 label="Duration"
+                onChange$={value => setValue(form, field.name, value)}
               />}
           </Field>
         </div>
@@ -180,15 +181,19 @@ export default component$(() => {
                           class="flex mb-2"
                         >
                           <Field name={`${timeFieldArray.name}.${timeIndex}`}>
-                          {(field, props) => <TimePicker
-                            {...props}
-                            selectedTime={getValue(form, field.name, { shouldActive: false })}
-                            onChange$={newTime => replace(form, `${timeFieldArray.name}`, {
-                              at: timeIndex,
-                              value: newTime
-                            })}
-                          />}
-                        </Field>
+                            {(field, props) => {
+                              return <TimePicker
+                                {...props}
+                                selectedTime={getValue(form, field.name, { shouldActive: false })}
+                                onChange$={newTime => {
+                                  replace(form, `${timeFieldArray.name}`, {
+                                    at: timeIndex,
+                                    value: newTime
+                                  });
+                                }}
+                              />}
+                            }
+                          </Field>
                           <button
                             title="Remove time"
                             hidden={timeFieldArray.items.length === 1}

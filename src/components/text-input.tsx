@@ -1,11 +1,10 @@
 import {
     component$,
     type PropFunction,
-    type QwikChangeEvent,
-    type QwikFocusEvent,
 } from '@builder.io/qwik';
 import { InputLabel } from './input-label';
 import { InputError } from './input-error';
+import { FieldElement } from '@modular-forms/qwik';
 
 type TextInputProps = {
     name: string;
@@ -16,16 +15,16 @@ type TextInputProps = {
     value: string | undefined;
     error: string;
     required?: boolean;
-    ref: PropFunction<(element: Element) => void>;
+    ref: PropFunction<(element: FieldElement) => void>;
     onInput$: PropFunction<(event: Event, element: HTMLInputElement) => void>;
     onChange$: PropFunction<
         (
-            event: QwikChangeEvent<HTMLInputElement>,
+            event: Event,
             element: HTMLInputElement
         ) => void
     >;
     onBlur$: PropFunction<
-        (event: QwikFocusEvent<HTMLInputElement>, element: HTMLInputElement) => void
+        (event: Event, element: HTMLInputElement) => void
     >;
 };
 
