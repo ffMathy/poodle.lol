@@ -14,6 +14,7 @@ import { start } from 'repl';
 import { TextInput } from '~/components/text-input';
 import { TextArea } from '~/components/text-area';
 import { Select } from '~/components/select';
+import { TimePicker } from '~/components/time-picker';
 
 export const head: DocumentHead = {
   title: 'Poodle',
@@ -126,14 +127,15 @@ export default component$(() => {
         <div class="sm:col-span-4">
           <Field name="durationInMinutes" type="number">
             {(field, props) => 
-              <Select
-                form={form}
-                fieldPath="durationInMinutes"
+              <Select<number>
+                {...props}
+                value={getValue(form, field.name, { shouldActive: false })}
                 options={getDurationsInMinutes().map(durationInMinutes => ({
                   label: getLabelFromDurationInMinutes(durationInMinutes),
                   value: durationInMinutes
                 }))}
                 label="Duration"
+                onChange$={value => setValue(form, field.name, value)}
               />}
           </Field>
         </div>
@@ -178,16 +180,20 @@ export default component$(() => {
                           key={`time-${item}-${timeIndex}`}
                           class="flex mb-2"
                         >
-                          {/* <Field name={`${timeFieldArray.name}.${timeIndex}`}>
-                          {(field, props) => <TimePicker
-                            fieldProps={props}
-                            selectedTime={getValue(form, `${timeFieldArray.name}.${timeIndex}`, { shouldActive: false })}
-                            onChange$={newTime => replace(form, `${timeFieldArray.name}`, {
-                              at: timeIndex,
-                              value: newTime
-                            })}
-                          />}
-                        </Field> */}
+                          <Field name={`${timeFieldArray.name}.${timeIndex}`}>
+                            {(field, props) => {
+                              return <TimePicker
+                                {...props}
+                                selectedTime={getValue(form, field.name, { shouldActive: false })}
+                                onChange$={newTime => {
+                                  replace(form, `${timeFieldArray.name}`, {
+                                    at: timeIndex,
+                                    value: newTime
+                                  });
+                                }}
+                              />}
+                            }
+                          </Field>
                           <button
                             title="Remove time"
                             hidden={timeFieldArray.items.length === 1}
@@ -215,7 +221,7 @@ export default component$(() => {
                       });
                     }}
                   >
-                    <svg q: slot="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <svg q:slot="icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
 

@@ -6,6 +6,7 @@ import {
   } from '@builder.io/qwik';
 import { InputError } from './input-error';
 import { InputLabel } from './input-label';
+import { FieldElement } from '@modular-forms/qwik';
   
   type TextAreaProps = {
     name: string;
@@ -15,16 +16,16 @@ import { InputLabel } from './input-label';
     value: string | undefined;
     error: string;
     required?: boolean;
-    ref: PropFunction<(element: Element) => void>;
+    ref: PropFunction<(element: FieldElement) => void>;
     onInput$: PropFunction<(event: Event, element: HTMLTextAreaElement) => void>;
     onChange$: PropFunction<
       (
-        event: QwikChangeEvent<HTMLTextAreaElement>,
+        event: Event,
         element: HTMLTextAreaElement
       ) => void
     >;
     onBlur$: PropFunction<
-      (event: QwikFocusEvent<HTMLTextAreaElement>, element: HTMLTextAreaElement) => void
+      (event: Event, element: HTMLTextAreaElement) => void
     >;
   };
   
