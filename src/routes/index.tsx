@@ -126,7 +126,7 @@ export default component$(() => {
       >
         <div class="sm:col-span-4">
           <Field name="durationInMinutes" type="number">
-            {(field, props) => 
+            {(field, props) =>
               <Select<number>
                 {...props}
                 value={getValue(form, field.name, { shouldActive: false })}
@@ -146,7 +146,7 @@ export default component$(() => {
             insert(form, "startTimesPerDay", {
               value: {
                 day: date,
-                times: [date]
+                times: [{ date }]
               }
             });
           }}
@@ -180,18 +180,16 @@ export default component$(() => {
                           key={`time-${item}-${timeIndex}`}
                           class="flex mb-2"
                         >
-                          <Field name={`${timeFieldArray.name}.${timeIndex}`}>
+                          <Field name={`${timeFieldArray.name}.${timeIndex}.date`} type="Date">
                             {(field, props) => {
                               return <TimePicker
                                 {...props}
                                 selectedTime={getValue(form, field.name, { shouldActive: false })}
                                 onChange$={newTime => {
-                                  replace(form, `${timeFieldArray.name}`, {
-                                    at: timeIndex,
-                                    value: newTime
-                                  });
+                                  setValue(form, field.name, newTime);
                                 }}
-                              />}
+                              />
+                            }
                             }
                           </Field>
                           <button
@@ -217,7 +215,7 @@ export default component$(() => {
                     label="Add time"
                     onClick$={() => {
                       insert(form, `${startTimesPerDayArray.name}.${dayIndex}.times`, {
-                        value: day
+                        value: { date: day }
                       });
                     }}
                   >

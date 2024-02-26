@@ -1,9 +1,9 @@
 import { component$, useComputed$ } from "@builder.io/qwik";
 import {Select} from "./select";
-import { format, setHours, setMinutes } from "date-fns";
+import { format, setHours, setMinutes, setSeconds } from "date-fns";
 
 export const TimePicker = component$((props: {
-    key?: string,
+    name: string,
     selectedTime?: Date,
     class?: string,
     onChange$: (time: Date) => void
@@ -25,13 +25,12 @@ export const TimePicker = component$((props: {
     });
 
     return <Select<Date>
-        name={`time-picker-${props.key}`}
-        key={`time-picker-${props.key}`}
+        name={props.name}
         label="Pick time"
         class={props.class}
         options={times.value.map(x => ({
             label: format(x, "p"),
-            value: x
+            value: setSeconds(x, 0)
         }))}
         value={props.selectedTime}
         placeholder={format(setMinutes(setHours(new Date(), 0), 0), "p")}

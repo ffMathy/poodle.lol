@@ -28,7 +28,9 @@ export const appointmentRequestSchema = z.object({
                 day: z
                     .date({ required_error: "For each date, you must specify the day." }),
                 times: z
-                    .array(z.date({ required_error: "For each date, you must specify a time." }))
+                    .array(z.object({
+                        date: z.date({ required_error: "For each date, you must specify a time." })
+                    }))
                     .nonempty("You must specify at least one time for all the dates selected.")
             }),
             { required_error: "You must specify at least one date." })
@@ -64,8 +66,8 @@ export const useCreateAppointment = globalAction$(
             location: data.location,
             availableTimes: data.startTimesPerDay.flatMap(x => x.times).map(x => ({
                 id: nanoid(),
-                startTime: x,
-                endTime: addMinutes(x, data.durationInMinutes)
+                startTime: x.date,
+                endTime: addMinutes(x.date, data.durationInMinutes)
             })),
             attendees: []
         } as Appointment);
